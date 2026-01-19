@@ -1,0 +1,285 @@
+type: collection.insomnia.rest/5.0
+name: Coleção Trabalho PJI
+meta:
+  id: wrk_228d17398ed343a983cfb18d8421bd8d
+  created: 1750676872774
+  modified: 1750676872774
+collection:
+  - name: USERS
+    meta:
+      id: fld_f084c1c7cc0a40cab1df825ccb33833e
+      created: 1750421083112
+      modified: 1750446206224
+      sortKey: -1750421083112
+    children:
+      - url: "{{ _.url }}/user/register"
+        name: CADASTRAR NOVO USUÁRIO
+        meta:
+          id: req_5bbdf861a4d24d0691408e70016ba7e3
+          created: 1750187682646
+          modified: 1758763369874
+          isPrivate: false
+          sortKey: -1750421111113
+        method: POST
+        body:
+          mimeType: application/json
+          text: |
+            {
+            	"email": "ola2dgmail.com",
+            	"telefone" : "12345678",
+            	"nome": "Jóia",
+            	"senha": "123"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.2.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/api/getAllUsers"
+        name: LISTAR TODOS OS USUÁRIOS
+        meta:
+          id: req_9c585eb46d3d4426a9fba65674b0c8ed
+          created: 1750188373801
+          modified: 1758727265340
+          isPrivate: false
+          sortKey: -1750421111013
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.2.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/api/user/3"
+        name: APRESENTAR DADOS DO USUÁRIO ID
+        meta:
+          id: req_e1e0feccf4b34c309c109a9789b58c56
+          created: 1750188395091
+          modified: 1758727813701
+          isPrivate: false
+          sortKey: -1750421110813
+        method: GET
+        body:
+          mimeType: application/json
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.2.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/api/user/4"
+        name: ATUALIZAR DADOS DO USUÁRIO
+        meta:
+          id: req_3dea91795c204d7ea1e4052baaaba1b3
+          created: 1750188506749
+          modified: 1758771234991
+          isPrivate: false
+          sortKey: -1750421110913
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |
+            {
+             "nome":"Everton",
+             "email": "ola2@gmail.com",
+            	"senha" : "123"
+             }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.2.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/api/user/6"
+        name: APAGAR USUÁRIO DO SISTEMA
+        meta:
+          id: req_3749f02f74354e72aa11e941c697f7fc
+          created: 1750190026791
+          modified: 1758729136870
+          isPrivate: false
+          sortKey: -1750421110713
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/11.2.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: Coleira(ainda não funciona)
+    meta:
+      id: fld_4d713726d8b043ca9589bb267734522e
+      created: 1750421205001
+      modified: 1758761104504
+      sortKey: -1750421083062
+    children:
+      - url: "{{ _.url }}/api/coleira"
+        name: CADASTRAR NOVO DISPOSITIVO
+        meta:
+          id: req_3d1cb4d99c224b65844c581d6afa3f75
+          created: 1750421205002
+          modified: 1758768835097
+          isPrivate: false
+          sortKey: -1750421111113
+        method: POST
+        body:
+          mimeType: application/json
+          text: |+
+            
+            {
+            	"nomeColeira" : "CãO 9",
+            	"userID" : "1",
+              "latitude": "1300",
+            	"longitude" : "123456"
+             } 
+
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.2.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/api/coleira/99"
+        name: LISTAR TODOS OS DISPOSITIVOS
+        meta:
+          id: req_49cb204c931a4e29932bbda7078ab306
+          created: 1750421205003
+          modified: 1758770416237
+          isPrivate: false
+          sortKey: -1750421111013
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.2.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/devices/1"
+        name: APRESENTAR DADOS DO DISPOSITIVO ID
+        meta:
+          id: req_7dbbfb6b68ff4721b4fe2fca317ee709
+          created: 1750421205004
+          modified: 1750681776615
+          isPrivate: false
+          sortKey: -1750421110813
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.2.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/devices/1"
+        name: ATUALIZAR DADOS DO DISPOSITIVO
+        meta:
+          id: req_6b494a35f380426f8caa1421c5912e95
+          created: 1750421205005
+          modified: 1750682846313
+          isPrivate: false
+          sortKey: -1750421110913
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |
+            {
+             "deviceName":"HOLIIE",
+            	"userId" : "1",
+             "longitude": "1123456789",
+             "latitude": "098765432"
+             }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.2.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/devices/2"
+        name: APAGAR DISPOSITIVO DO SISTEMA
+        meta:
+          id: req_1e53f864e91a4b0eac72a476bc9405f4
+          created: 1750421205006
+          modified: 1750681768497
+          isPrivate: false
+          sortKey: -1750421110713
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/11.2.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_8ecc0a4a980d4bb0b712626b5c01b29b
+    created: 1750187360606
+    modified: 1750187360606
+environments:
+  name: Base Environment
+  meta:
+    id: env_a49029921dcb4ac399a74bed7419a7c7
+    created: 1750187360605
+    modified: 1758727711978
+    isPrivate: false
+  data:
+    url: http://192.168.18.10:5000
