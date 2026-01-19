@@ -1,4 +1,4 @@
-import styles from '../../styles/Register.module.css';
+import styles from '../../styles/register.module.css';
 import dog from '../../assets/images/cao2.webp';
 import logo from '../../assets/images/Logo.png';
 import { useState } from "react";
