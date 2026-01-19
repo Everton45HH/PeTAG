@@ -1,0 +1,156 @@
+.device-card {
+  background: white;
+  border-radius: 0.75rem;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+              0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  padding: 1rem;
+  border: 1px solid #f3f4f6;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+
+.device-card:hover {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  transform: translateY(-2px);
+}
+
+.device-card-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.device-info h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 0;
+  padding: 0.1rem 0.2rem;
+  
+}
+
+.device-type-badge {
+  font-size: 0.875rem;
+  text-align: center;
+  top : 0;
+  background-color: #6b7280a9;
+  border-radius: 100px;
+  padding: 0.1rem 0.5rem;
+}
+
+.device-type-collar {
+  padding: 0;
+  color: #1e40af;
+}
+
+.device-settings-button {
+  padding: 0.5rem;
+  margin: auto 0;
+  border-radius: 999px;
+  background: transparent;
+  height: max-content;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.device-settings-button:hover {
+  background-color: #f3f4f6;
+}
+
+.device-delete-button{
+  background-color: red;
+  color: white;
+}
+
+.device-distance-info {
+  margin-bottom: 0.75rem;
+}
+
+.distance-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.distance-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.distance-value {
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.distance-green {
+  color: #059669;
+}
+
+.distance-yellow {
+  color: #d97706;
+}
+
+.distance-red {
+  color: #dc2626;
+}
+
+.progress-bar-container {
+  width: 100%;
+  background-color: #e5e7eb;
+  border-radius: 9999px;
+  height: 0.625rem;
+}
+
+.progress-bar {
+  height: 0.625rem;
+  border-radius: 9999px;
+  transition: width 0.5s ease-in-out;
+}
+
+.progress-green {
+  background-color: #10b981;
+}
+
+.progress-yellow {
+  background-color: #f59e0b;
+}
+
+.progress-red {
+  background-color: #ef4444;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 0;
+}
+
+.empty-state-icon {
+  font-size: 3.75rem;
+  margin-bottom: 1rem;
+  color: #9ca3af;
+}
+
+.empty-state-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state-description {
+  color: #9ca3af;
+}
+
+.table {
+  background-color: whitesmoke;
+  margin: 0 auto;
+  width: 80%;
+  border-radius: 2%;
+}
+
+.table_devices {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}

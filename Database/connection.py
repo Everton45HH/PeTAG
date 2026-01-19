@@ -1,0 +1,11 @@
+import sqlite3
+import os
+
+class Database:
+    def get_connection(self):
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        db_path = os.path.join(base_dir, "databasePeTAG.db")
+
+        conn = sqlite3.connect(db_path)
+        conn.row_factory = sqlite3.Row
+        return conn, conn.cursor()
