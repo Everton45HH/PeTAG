@@ -2,7 +2,7 @@ from flask_jwt_extended import (create_access_token, get_jwt_identity, jwt_requi
 from flask import Blueprint, request, jsonify
 from backend.utils.error_messages import ERROR as ERRO
 from backend.services.user_service import *
-from backend.extensions.extensions import bcrypt
+from backend.extensions.extension import bcrypt
 
 users_bp = Blueprint('users', __name__, url_prefix='')
 
