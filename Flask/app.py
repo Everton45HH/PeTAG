@@ -1,9 +1,6 @@
 from datetime import timedelta
-from flask_jwt_extended import JWTManager
-from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 from flask import Flask
-from Flask.extensions.extensions import bcrypt, jwt
 import os
 from dotenv import load_dotenv
 
@@ -12,20 +9,14 @@ load_dotenv()
 SECRET_KEY = os.environ.get("SECRET_KEY")
 IS_PROD = os.environ.get("FLASK_ENV") == "production"
 
-bcrypt = Bcrypt()
-jwt = JWTManager()
-
 def create_app():
     app = Flask(__name__)
 
     app.config["JWT_SECRET_KEY"] = SECRET_KEY 
     app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
-    
     app.config["JWT_COOKIE_SECURE"] = IS_PROD
     app.config["JWT_COOKIE_DOMAIN"] = None
-    
     app.config["JWT_COOKIE_SAMESITE"] = "Lax"
-    
     app.config["JWT_ACCESS_COOKIE_PATH"] = "/"
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
     app.config["JWT_COOKIE_CSRF_PROTECT"] = False
@@ -33,6 +24,9 @@ def create_app():
     app.config["JWT_COOKIE_HTTPONLY"] = True
     app.config["JWT_REFRESH_COOKIE_NAME"] = "refresh_token_cookie"
 
+    # Importar aqui para evitar circular imports
+    from Flask.extensions.extensions import bcrypt, jwt
+    
     bcrypt.init_app(app)
     jwt.init_app(app)
 
@@ -63,6 +57,5 @@ def create_app():
 app = create_app()
 
 if __name__ == '__main__':
-    
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
