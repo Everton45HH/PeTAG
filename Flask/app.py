@@ -3,7 +3,7 @@ from flask_jwt_extended import JWTManager
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 from flask import Flask
-from extensions.extensions import bcrypt, jwt
+from Flask.extensions.extensions import bcrypt, jwt
 import os
 from dotenv import load_dotenv
 
@@ -36,10 +36,10 @@ def create_app():
     bcrypt.init_app(app)
     jwt.init_app(app)
 
-    from routes.user_route import users_bp
+    from Flask.routes.user_route import users_bp
     app.register_blueprint(users_bp)
 
-    from routes.coleira_route import coleira_bp
+    from Flask.routes.coleira_route import coleira_bp
     app.register_blueprint(coleira_bp)
 
     allowed_origins = ["https://petag-project.vercel.app"]
