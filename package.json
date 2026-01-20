@@ -4,9 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently -k \"npm:start-vite\" \"npm:start-flask\"",
-    "start-vite": "vite --host 0.0.0.0",
-    "start-flask": "start   cmd /k python Flask/app.py",
+    "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
