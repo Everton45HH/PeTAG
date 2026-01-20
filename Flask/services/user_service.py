@@ -1,4 +1,5 @@
-from dao.userDAO import UserDAO
+from Flask.dao.userDAO import UserDAO
+
 
 daoService = UserDAO()
 
