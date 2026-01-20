@@ -25,7 +25,7 @@ def create_app():
     app.config["JWT_REFRESH_COOKIE_NAME"] = "refresh_token_cookie"
 
     # Importar aqui para evitar circular imports
-    from backend.extensions.extensions import bcrypt, jwt
+    from backend.extensions.extension import bcrypt, jwt
     
     bcrypt.init_app(app)
     jwt.init_app(app)
