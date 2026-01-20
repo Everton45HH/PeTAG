@@ -1,7 +1,7 @@
+from flask_jwt_extended import (create_access_token, get_jwt_identity, jwt_required , set_access_cookies , unset_jwt_cookies)
 from Flask.utils.error_messages import ERROR as ERRO
 from flask import Blueprint, request, jsonify
 from Flask.services.user_service import *
-from flask_jwt_extended import (create_access_token, get_jwt_identity, jwt_required , set_access_cookies , unset_jwt_cookies)
 from Flask.extensions.extensions import bcrypt
 
 users_bp = Blueprint('users', __name__, url_prefix='')
