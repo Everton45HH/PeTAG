@@ -1,4 +1,4 @@
-from backend.dao.userDAO import UserDAO
+from dao.userDAO import UserDAO
 
 
 daoService = UserDAO()
