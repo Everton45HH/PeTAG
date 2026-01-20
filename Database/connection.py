@@ -1,11 +1,16 @@
-import sqlite3
+import psycopg2
+import psycopg2.extras
 import os
+import dotenv
+
+dotenv.load_dotenv()
 
 class Database:
     def get_connection(self):
-        base_dir = os.path.dirname(os.path.abspath(__file__))
-        db_path = os.path.join(base_dir, "databasePeTAG.db")
+        DATABASE_URL = os.environ.get("DATABASE_URL")
+        
+        conn = psycopg2.connect(DATABASE_URL)
+        
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
-        conn = sqlite3.connect(db_path)
-        conn.row_factory = sqlite3.Row
-        return conn, conn.cursor()
+        return conn, cursor
