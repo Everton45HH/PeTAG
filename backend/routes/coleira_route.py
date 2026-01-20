@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required , get_jwt_identity
-from Flask.services.device_service import *
-from Flask.utils.error_messages import ERROR as ERRO
+from backend.services.device_service import *
+from backend.utils.error_messages import ERROR as ERRO
 
 coleira_bp = Blueprint('coleiras', __name__, url_prefix='')
 

@@ -1,4 +1,4 @@
-from Flask.dao.coleiraDAO import ColeiraDAO
+from backend.dao.coleiraDAO import ColeiraDAO
 
 
 daoService = ColeiraDAO()
