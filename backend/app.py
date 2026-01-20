@@ -24,16 +24,16 @@ def create_app():
     app.config["JWT_COOKIE_HTTPONLY"] = True
     app.config["JWT_REFRESH_COOKIE_NAME"] = "refresh_token_cookie"
 
-    # Importar aqui para evitar circular imports
-    from backend.extensions.extension import bcrypt, jwt
+    # Use imports relativos
+    from .extensions.extension import bcrypt, jwt
     
     bcrypt.init_app(app)
     jwt.init_app(app)
 
-    from backend.routes.user_route import users_bp
+    from .routes.user_route import users_bp
     app.register_blueprint(users_bp)
 
-    from backend.routes.coleira_route import coleira_bp
+    from .routes.coleira_route import coleira_bp
     app.register_blueprint(coleira_bp)
 
     allowed_origins = ["https://petag-project.vercel.app"]
