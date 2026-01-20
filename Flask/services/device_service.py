@@ -1,4 +1,4 @@
-from DAO.coleiraDAO import ColeiraDAO
+from dao.coleiraDAO import ColeiraDAO
 
 daoService = ColeiraDAO()
 

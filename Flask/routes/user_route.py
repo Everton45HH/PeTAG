@@ -4,7 +4,7 @@ from services.user_service import *
 
 from flask_jwt_extended import (create_access_token, get_jwt_identity, jwt_required , set_access_cookies , unset_jwt_cookies)
 
-from  app import bcrypt 
+from extensions.extensions import bcrypt
 
 users_bp = Blueprint('users', __name__, url_prefix='')
 
@@ -116,3 +116,4 @@ def list_user(id):
         erro_info = ERRO.get(erro, {'message': 'Unknown error', 'status_code': 500})
         return jsonify({'message': erro_info['message']}), erro_info['status_code']
     return jsonify(users), 200
+    

@@ -22,11 +22,13 @@ export default function Dashboard() {
         const res = await fetch(
           `${import.meta.env.VITE_API_URL}user/me`,
           {
+            method: "GET",
             credentials: "include"
           }
         );
 
         if (!res.ok) {
+          alert("Faça login")
           window.location.href = "/user/login";
           return;
         }
@@ -76,37 +78,37 @@ export default function Dashboard() {
     }
   }
 
-  useEffect(() => {
-    if (!userID || coleiras.length === 0) return;
+  // useEffect(() => {
+  //   if (!userID || coleiras.length === 0) return;
 
-    const updateInterval = setInterval(async () => {
-      try {
-        const updatePromises = coleiras.map(async (c) => {
-          const payload = {
-            idColeira: c.idColeira,
-            userID,
-            latitude: (c.latitude ?? 0) + (Math.random() * 0.0002 - 0.0001),
-            longitude: (c.longitude ?? 0) + (Math.random() * 0.0002 - 0.0001)
-          };
+  //   const updateInterval = setInterval(async () => {
+  //     try {
+  //       const updatePromises = coleiras.map(async (c) => {
+  //         const payload = {
+  //           idColeira: c.idColeira,
+  //           userID,
+  //           latitude: (c.latitude ?? 0) + (Math.random() * 0.0002 - 0.0001),
+  //           longitude: (c.longitude ?? 0) + (Math.random() * 0.0002 - 0.0001)
+  //         };
 
-          return fetch(`${import.meta.env.VITE_API_URL}devices/${c.idColeira}/coords`, {
-            method: "PUT",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify(payload)
-          });
-        });
+  //         return fetch(`${import.meta.env.VITE_API_URL}devices/${c.idColeira}/coords`, {
+  //           method: "PUT",
+  //           credentials: "include",
+  //           headers: {
+  //             "Content-Type": "application/json"
+  //           },
+  //           body: JSON.stringify(payload)
+  //         });
+  //       });
 
-        await Promise.all(updatePromises);
-      } catch (error) {
-        console.error("Erro ao atualizar coordenadas:", error);
-      }
-    }, 3000);
+  //       await Promise.all(updatePromises);
+  //     } catch (error) {
+  //       console.error("Erro ao atualizar coordenadas:", error);
+  //     }
+  //   }, 3000);
 
-    return () => clearInterval(updateInterval);
-  }, [coleiras, userID]);
+  //   return () => clearInterval(updateInterval);
+  // }, [coleiras, userID]);
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
