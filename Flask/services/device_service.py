@@ -1,5 +1,6 @@
 from dao.coleiraDAO import ColeiraDAO
 
+
 daoService = ColeiraDAO()
 
 def create_coleira(info):
