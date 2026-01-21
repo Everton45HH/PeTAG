@@ -25,7 +25,7 @@ def create():
 
     response, erro = get_user_by_email(info_body.get("email"))
 
-    info_body['senha'] = bcrypt.generate_password_hash(password = senha)
+    info_body['senha'] = bcrypt.generate_password_hash(password = senha).decode('utf-8')
 
     if response:
         return jsonify({'message': "Email já cadastrado"}), 409
@@ -61,7 +61,6 @@ def login():
 
     if not user:
         return jsonify({"message": "Email não encontrado"}), 404
-
     if bcrypt.check_password_hash(user["senha"], senha):
 
         aux = str(user['userID'])
