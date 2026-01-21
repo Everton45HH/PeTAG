@@ -1,4 +1,5 @@
 from .connection import Database
+from psycopg2.extras import RealDictRow
 
 class UserDAO(Database):
     # POST
@@ -20,9 +21,9 @@ class UserDAO(Database):
     def listAllUsersDAO(self):
         conn, cursor = self.get_connection()
         try:    
-            cursor.execute("SELECT userID, nome, telefone, email, senha FROM Usuario")
+            cursor.execute("SELECT userid, nome, telefone, email, senha FROM Usuario")
             rows = cursor.fetchall()
-            users = [{'userID': row[0], 'nome': row[1], 'telefone': row[2], 'email': row[3], 'senha': row[4]} for row in rows]
+            users = [{'userid': row[0], 'nome': row[1], 'telefone': row[2], 'email': row[3], 'senha': row[4]} for row in rows]
             return (users, None) if users else (None, "Users not found")
         except Exception as e:
             return None, f"Database error: {e}"
@@ -34,7 +35,7 @@ class UserDAO(Database):
     def getUserByIdDAO(self, id):
         conn, cursor = self.get_connection()
         try:
-            cursor.execute("SELECT userID, nome, email, senha, telefone FROM Usuario WHERE userID = %s", (id,))
+            cursor.execute("SELECT userid, nome, email, senha, telefone FROM Usuario WHERE userid = %s", (id,))
             user = cursor.fetchone()
             if user:
                 return {'userID': user[0], 'nome': user[1], 'email': user[2], 'senha': user[3], 'telefone': user[4]}, None
@@ -48,13 +49,15 @@ class UserDAO(Database):
     def getUserByEmailDAO(self, email):
         conn, cursor = self.get_connection()
         try:
-            cursor.execute("SELECT userID, nome, email, senha, telefone FROM Usuario WHERE email = %s", (email,))
+            cursor.execute("SELECT userid, nome, email, senha, telefone FROM Usuario WHERE email = %s", (email,))
             user = cursor.fetchone()
-            if user:
-                return {'userID': user[0], 'nome': user[1], 'email': user[2], 'senha': user[3], 'telefone': user[4]}, None
+            user_dict = dict(user)
+            if user_dict:
+                
+                return {'userID': user_dict['userid'], 'nome': user_dict['nome'], 'email': user_dict['email'], 'senha': user_dict['senha'], 'telefone': user_dict['telefone']} , None
             return None, "User not found"
         except Exception as e:
-            return None, f"Database error: {e}"
+            return None, f"Database error: {e} aqui"
         finally:
             cursor.close()
             conn.close()
@@ -73,7 +76,7 @@ class UserDAO(Database):
                 values.append(value)
             values.append(id)
 
-            query = f"UPDATE Usuario SET {', '.join(fields)} WHERE userID = %s"
+            query = f"UPDATE Usuario SET {', '.join(fields)} WHERE userid = %s"
             cursor.execute(query, values)
             conn.commit()
 
@@ -88,7 +91,7 @@ class UserDAO(Database):
     def deleteUserDAO(self, id):
         conn, cursor = self.get_connection()
         try:
-            cursor.execute("DELETE FROM Usuario WHERE userID = %s", (id,))
+            cursor.execute("DELETE FROM Usuario WHERE userid = %s", (id,))
             conn.commit()
             return "Removido com sucesso", None
         except Exception as e:
