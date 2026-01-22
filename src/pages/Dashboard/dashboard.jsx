@@ -203,7 +203,7 @@ export default function Dashboard() {
               required
             />
             <input 
-              type="number" 
+              inputMode="numeric" 
               placeholder="Distância Máxima em Metros (Raio)" 
               value={newDevice.maxDistance} 
               onChange={e => setNewDevice({ ...newDevice, maxDistance: e.target.value })} 

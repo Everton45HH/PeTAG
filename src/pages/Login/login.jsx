@@ -3,6 +3,7 @@ import dog from '../../assets/images/cao2.webp';
 import logo from '../../assets/images/Logo.png';
 import { useNavigate } from 'react-router-dom'; 
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 
 export default function Login() {
@@ -54,9 +55,10 @@ export default function Login() {
 
             <div className={styles.login}>
                 
-                <img src={logo} alt="Logo PeTAG" className={styles.logo} />
-
-
+                <a href="/">
+                    <img src={logo} alt="Logo PeTAG" className={styles.logo} />
+                </a>
+        
                 <form className={styles.login_box} onSubmit={handleSubmit}>
                         <label htmlFor="email" className={styles.label}>Email:</label>
                         <input type="email" placeholder="Email" name="email" required onChange={(e) => setEmail(e.target.value)} />
@@ -78,9 +80,9 @@ export default function Login() {
                     <p className={styles.ou}>Ou tente login de outra forma</p>
 
                     <div className={styles.social_login}>
-                        <i className="fa-brands fa-google"></i>
-                        <i className="fa-brands fa-facebook"></i>
-                        <i className="fa-brands fa-microsoft"></i>
+                        <i className="fa-brands fa-google" onClick={() => {alert("Botões apenas para ilustração")}}></i>
+                        <i className="fa-brands fa-facebook" onClick={() => {alert("Botões apenas para ilustração")}}></i>
+                        <i className="fa-brands fa-microsoft" onClick={() => {alert("Botões apenas para ilustração")}}></i>
                     </div>
 
                     <input 
