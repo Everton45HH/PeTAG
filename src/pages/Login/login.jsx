@@ -55,10 +55,9 @@ export default function Login() {
 
             <div className={styles.login}>
                 
-                <a href="/">
+                <Link to='/'>
                     <img src={logo} alt="Logo PeTAG" className={styles.logo} />
-                </a>
-        
+                </Link>        
                 <form className={styles.login_box} onSubmit={handleSubmit}>
                         <label htmlFor="email" className={styles.label}>Email:</label>
                         <input type="email" placeholder="Email" name="email" required onChange={(e) => setEmail(e.target.value)} />
@@ -101,7 +100,7 @@ export default function Login() {
                     />
             {/* Acredita em mim tem que ser desse jeito  :)*/}
 
-                    <p className={styles.cadastro}>Não tem uma conta? <a href="/user/register">Cadastre-se</a></p>
+                    <p className={styles.cadastro}>Não tem uma conta? <Link to="/user/register">Cadastre-se</Link></p>
                     
                     {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
 

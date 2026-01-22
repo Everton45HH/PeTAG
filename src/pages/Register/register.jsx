@@ -54,9 +54,9 @@ const handleSubmit = async (e) => {
 
           <div className={styles.login}>
 
-              <a href="/">
-                <img src={logo} alt="Logo PeTAG" className={styles.logo} />
-              </a>
+                <Link to='/'>
+                    <img src={logo} alt="Logo PeTAG" className={styles.logo} />
+                </Link>
 
               <form className={styles.login_box} onSubmit={handleSubmit}>
 
@@ -98,7 +98,7 @@ const handleSubmit = async (e) => {
           {/* Acredita em mim tem que ser desse jeito  :)*/}
     
                   <p className={styles.cadastro}>
-                      Já tem uma conta? <a href="/user/login">Conecte-se</a>
+                      Já tem uma conta? <Link to="/user/login">Conecte-se</Link >
                   </p>
                                       {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
                   
