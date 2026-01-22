@@ -14,8 +14,8 @@ function HeaderHome() {
                 </ul>
 
                 <ul className={styles.nav_list2}>
-                    <li><a href="user/login" className={styles.nav_link}>ENTRAR</a></li>
-                    <li><a href="user/register" className={styles.nav_link}>CADASTRE-SE</a></li>
+                    <li><Link to="user/login" className={styles.nav_link}>ENTRAR</Link></li>
+                    <li><Link to="user/register" className={styles.nav_link}>CADASTRE-SE</Link></li>
                 </ul>
 
             </div>
