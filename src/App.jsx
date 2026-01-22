@@ -2,7 +2,7 @@ import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useState } from 'react';
 import Login from './pages/Login/login.jsx';
-import Home from './components/HeaderHome/headerHome.jsx';
+import Home from './pages/Home/home.jsx';
 import Register from './pages/Register/register.jsx';
 import Dashboard from './pages/Dashboard/dashboard.jsx'
 
