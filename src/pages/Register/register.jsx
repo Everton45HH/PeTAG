@@ -54,9 +54,9 @@ const handleSubmit = async (e) => {
 
           <div className={styles.login}>
 
-                <Link to='/' >
-                    <img src={logo} alt="Logo PeTAG" className={styles.logo} />
-                </Link>
+              <a href="/">
+                <img src={logo} alt="Logo PeTAG" className={styles.logo} />
+              </a>
 
               <form className={styles.login_box} onSubmit={handleSubmit}>
 
