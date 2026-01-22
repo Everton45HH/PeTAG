@@ -3,6 +3,7 @@ import dog from '../../assets/images/cao2.webp';
 import logo from '../../assets/images/Logo.png';
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 
 export default function Register() {
@@ -53,24 +54,26 @@ const handleSubmit = async (e) => {
 
           <div className={styles.login}>
 
-              <img src={logo} alt="Logo PeTAG" className={styles.logo} />
+                <Link to='/' >
+                    <img src={logo} alt="Logo PeTAG" className={styles.logo} />
+                </Link>
 
               <form className={styles.login_box} onSubmit={handleSubmit}>
 
-                  <label htmlFor="nome">Nome:</label>
-                  <input type="text" required placeholder="Digite seu Nome" name="nome" onChange={(e) => setNome(e.target.value)} />
+                  <label htmlFor="nome">Nome</label>
+                  <input type="text" required placeholder="Digite seu Nome"  name="nome" onChange={(e) => setNome(e.target.value)} />
                   
-                  <label htmlFor="telefone">Telefone:</label>
-                  <input type="number" required placeholder="Digite seu Telefone" name="telefone" onChange={(e) => setTelefone(e.target.value)} />
+                  <label htmlFor="telefone">Telefone</label>
+                  <input inputMode='numeric' min={0} required placeholder="Digite seu Telefone" name="telefone" onChange={(e) => setTelefone(e.target.value)} />
 
-                  <label htmlFor="email">Email:</label>
+                  <label htmlFor="email">Email</label>
                   <input type="email" required placeholder="Digite seu Email" name="email" onChange={(e) => setEmail(e.target.value)} />
 
-                  <label htmlFor="senha" className={styles.label}>Senha:</label>
+                  <label htmlFor="senha" className={styles.label}>Senha</label>
 
                   <div className={styles.senha_box}>
                                 
-                    <input type={senhaVisivel ? "text" : "password"} placeholder="Senha" required value={senha} onChange={(e) => setSenha(e.target.value)} className={styles.input} />
+                    <input type={senhaVisivel ? "text" : "password"} placeholder="Digite sua Senha" required value={senha} onChange={(e) => setSenha(e.target.value)} className={styles.input} />
                     
                       <button type="button" onClick={toggleSenhaVisivel} className={styles.button_eye} aria-label={senhaVisivel ? "Ocultar senha" : "Mostrar senha"}>
                               {senhaVisivel ? <i className="fa-solid fa-eye"></i> : <i className="fa-solid fa-eye-slash"></i>}
@@ -81,9 +84,9 @@ const handleSubmit = async (e) => {
                   <p className={styles.ou}>Ou crie uma conta de outra forma</p>
                   
                   <div className={styles.social_login}>
-                      <i className="fa-brands fa-google"></i>
-                      <i className="fa-brands fa-facebook"></i>
-                      <i className="fa-brands fa-microsoft"></i>
+                      <i className="fa-brands fa-google" onClick={() => {alert("Botões apenas para ilustração")}}></i>
+                      <i className="fa-brands fa-facebook" onClick={() => {alert("Botões apenas para ilustração")}}></i>
+                      <i className="fa-brands fa-microsoft" onClick={() => {alert("Botões apenas para ilustração")}}></i>
                   </div>
                     <input 
                     type="submit" 
