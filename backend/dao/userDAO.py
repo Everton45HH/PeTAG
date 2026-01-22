@@ -51,9 +51,8 @@ class UserDAO(Database):
         try:
             cursor.execute("SELECT userid, nome, email, senha, telefone FROM Usuario WHERE email = %s", (email,))
             user = cursor.fetchone()
-            user_dict = dict(user)
-            if user_dict:
-                
+            if user:
+                user_dict = dict(user)
                 return {'userID': user_dict['userid'], 'nome': user_dict['nome'], 'email': user_dict['email'], 'senha': user_dict['senha'], 'telefone': user_dict['telefone']} , None
             return None, "User not found"
         except Exception as e:

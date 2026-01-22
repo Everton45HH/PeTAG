@@ -13,18 +13,18 @@ def create_app():
     app = Flask(__name__)
 
     app.config["JWT_SECRET_KEY"] = SECRET_KEY 
-    app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
+    app.config["JWT_TOKEN_LOCATION"] = ["cookies"]    
     app.config["JWT_COOKIE_SECURE"] = IS_PROD
+    app.config["JWT_COOKIE_SAMESITE"] = "None" if IS_PROD else "Lax"
     app.config["JWT_COOKIE_DOMAIN"] = None
-    app.config["JWT_COOKIE_SAMESITE"] = "Lax"
-    app.config["JWT_ACCESS_COOKIE_PATH"] = "/"
-    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
-    app.config["JWT_COOKIE_CSRF_PROTECT"] = False
-    app.config["JWT_ACCESS_COOKIE_NAME"] = "access_token_cookie"
     app.config["JWT_COOKIE_HTTPONLY"] = True
+    app.config["JWT_ACCESS_COOKIE_PATH"] = "/"
+    app.config["JWT_REFRESH_COOKIE_PATH"] = "/"
+    app.config["JWT_ACCESS_COOKIE_NAME"] = "access_token_cookie"
     app.config["JWT_REFRESH_COOKIE_NAME"] = "refresh_token_cookie"
-
-    # Importar aqui para evitar circular imports
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
+    app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
+    app.config["JWT_COOKIE_CSRF_PROTECT"] = False  # Desabilitar por enquanto para testar
     from extensions.extension import bcrypt, jwt
     
     bcrypt.init_app(app)
@@ -36,21 +36,26 @@ def create_app():
     from routes.coleira_route import coleira_bp
     app.register_blueprint(coleira_bp)
 
-    allowed_origins = ["https://petag-project.vercel.app"]
-
+    # Configuração do CORS
+    allowed_origins = []
+    
     if IS_PROD:
-        app.config["JWT_COOKIE_DOMAIN"] = "https://petag-project.vercel.app"
+        allowed_origins = ["https://petag-project.vercel.app"]
     else:
-        app.config["JWT_COOKIE_DOMAIN"] = None
-
-    if not IS_PROD:
-        allowed_origins.extend([
+        allowed_origins = [
             "http://localhost:5173",
             "http://127.0.0.1:5173",
             "http://192.168.18.10:5173"
-        ])
+        ]
 
-    CORS(app, supports_credentials=True, origins=allowed_origins)
+    CORS(
+        app, 
+        supports_credentials=True, 
+        origins=allowed_origins,
+        allow_headers=["Content-Type", "Authorization"],
+        expose_headers=["Set-Cookie"],
+        methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
+    )
 
     return app
 
@@ -58,4 +63,4 @@ app = create_app()
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", port=port, debug=not IS_PROD)

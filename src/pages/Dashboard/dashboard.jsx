@@ -40,7 +40,7 @@ export default function Dashboard() {
 
         fetchInterval = setInterval(() => {
           fetchColeiras(data.user_ID);
-        }, 3000);
+        }, 7000);
 
       } catch (error) {
         console.error("Erro na inicialização:", error);
