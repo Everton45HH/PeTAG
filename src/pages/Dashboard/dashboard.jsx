@@ -10,7 +10,7 @@ export default function Dashboard() {
   const [userID, setUserID] = useState(null);
   const [newDevice, setNewDevice] = useState({ name: '', maxDistance: '' });
   const [loading, setLoading] = useState(true);
-  const baseURL =  baseURL;
+  const baseURL =  import.meta.env.VITE_API_URL;
 
   const toggleForm = () => setShowForm(prev => !prev);
 
@@ -21,7 +21,7 @@ export default function Dashboard() {
       try {
         // valida sessão
         const res = await fetch(
-          `${ baseURL}user/me`,
+          `${baseURL}user/me`,
           {
             method: "GET",
             credentials: "include"
@@ -61,7 +61,7 @@ export default function Dashboard() {
   async function fetchColeiras(id) {
     try {
       const res = await fetch(
-        `${ baseURL}api/coleira/${id}`,
+        `${baseURL}api/coleira/${id}`,
         {
           credentials: "include"
         }
@@ -92,7 +92,7 @@ export default function Dashboard() {
   //           longitude: (c.longitude ?? 0) + (Math.random() * 0.0002 - 0.0001)
   //         };
 
-  //         return fetch(`${ baseURL}devices/${c.idColeira}/coords`, {
+  //         return fetch(`${baseURL}devices/${c.idColeira}/coords`, {
   //           method: "PUT",
   //           credentials: "include",
   //           headers: {
@@ -116,7 +116,7 @@ export default function Dashboard() {
 
     try {
       const res = await fetch(
-        `${ baseURL}api/coleira`,
+        `${baseURL}api/coleira`,
         {
           method: "POST",
           credentials: "include",
@@ -154,7 +154,7 @@ export default function Dashboard() {
 
     try {
       const res = await fetch(
-  `${ baseURL}api/coleira/${idColeira}`,
+  `${baseURL}api/coleira/${idColeira}`,
   {
     method: "DELETE",
     credentials: "include"
