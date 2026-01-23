@@ -14,6 +14,7 @@ export default function Register() {
   const [errorMessage, setErrorMessage] = useState("");
   const [senhaVisivel, setSenhaVisivel] = useState(false);
   const [loading, setLoading] = useState(false);
+  const baseURL = import.meta.env.VITE_API_URL;
 
   const toggleSenhaVisivel = () => {
     setSenhaVisivel(!senhaVisivel);
@@ -25,7 +26,7 @@ export default function Register() {
     setErrorMessage("");
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}user/register`, {
+      const response = await fetch(`${baseURL}user/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nome, telefone, email, senha }),

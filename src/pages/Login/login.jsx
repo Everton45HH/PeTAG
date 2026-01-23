@@ -9,6 +9,8 @@ import { Link } from 'react-router-dom';
 export default function Login() {
     const navigate = useNavigate()
 
+    const baseURL = import.meta.env.VITE_API_URL;
+
     const [senhaVisivel, setSenhaVisivel] = useState(false);
     const toggleSenhaVisivel = () => {
         setSenhaVisivel(!senhaVisivel);
@@ -23,7 +25,7 @@ export default function Login() {
     setErrorMessage("");
     
     try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}user/login`, {
+        const response = await fetch(`${ baseURL}user/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, senha }),
