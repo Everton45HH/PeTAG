@@ -11,7 +11,11 @@ export default function Dashboard() {
   const [userID, setUserID] = useState(null);
   const [newDevice, setNewDevice] = useState({ name: '', maxDistance: '' });
   const [loading, setLoading] = useState(true);
-  const baseURL = import.meta.env.VITE_API_URL;
+  const baseURL = async function getURL() {
+    const response = await fetch(import.meta.env.VITE_API_URL);
+    const data = await response.json();
+    return data.url;
+  }
   const navigate = useNavigate();
 
   const toggleForm = () => setShowForm(prev => !prev);
