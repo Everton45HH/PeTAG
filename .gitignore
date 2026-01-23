@@ -16,6 +16,12 @@ Database
 .env
 .env.local
 
+.env
+.vscode/
+__pycache__/
+*.db
+.venv/
+
 # Editor directories and files
 .vite/
 .vscode/*
