@@ -5,9 +5,9 @@ export default function HeaderDashBoard({
   onMenuClick,
   onSearchClick
 }) {
-
+  const baseURL = import.meta.env.VITE_API_URL;
   function handleLogout() {
-    fetch(`${import.meta.env.VITE_API_URL}user/logout`, {
+    fetch(`${baseURL}user/logout`, {
       method: "POST",
       credentials: "include"
     }).then(() => {
