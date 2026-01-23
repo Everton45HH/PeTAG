@@ -11,11 +11,7 @@ export default function Dashboard() {
   const [userID, setUserID] = useState(null);
   const [newDevice, setNewDevice] = useState({ name: '', maxDistance: '' });
   const [loading, setLoading] = useState(true);
-  const baseURL = async function getURL() {
-    const response = await fetch(import.meta.env.VITE_API_URL);
-    const data = await response.json();
-    return data.url;
-  }
+  const baseURL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
 
   const toggleForm = () => setShowForm(prev => !prev);
@@ -42,7 +38,6 @@ export default function Dashboard() {
         const data = await res.json();
         console.log("Dados do usuário:", data);
         
-        // CORREÇÃO: O backend retorna 'userID', não 'user_ID'
         const userId = data.userID || data.user_ID;
         
         if (!userId) {
@@ -55,7 +50,6 @@ export default function Dashboard() {
         setUserID(userId);
         await fetchColeiras(userId);
 
-        // Atualizar coleiras a cada 7 segundos
         fetchInterval = setInterval(() => {
           fetchColeiras(userId);
         }, 7000);
