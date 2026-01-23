@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ActionButtons from '../../components/ActionButtons/ActionButtons.jsx';
 import DashboardCard from '../../components/DashboardCard/DashboardCard.jsx';
 import HeaderDashBoard from '../../components/HeaderDashBoard/HeaderDashBoard.jsx';
@@ -10,7 +11,8 @@ export default function Dashboard() {
   const [userID, setUserID] = useState(null);
   const [newDevice, setNewDevice] = useState({ name: '', maxDistance: '' });
   const [loading, setLoading] = useState(true);
-  const baseURL =  import.meta.env.VITE_API_URL;
+  const baseURL = import.meta.env.VITE_API_URL;
+  const navigate = useNavigate();
 
   const toggleForm = () => setShowForm(prev => !prev);
 
@@ -19,7 +21,6 @@ export default function Dashboard() {
 
     async function init() {
       try {
-        // valida sessão
         const res = await fetch(
           `${baseURL}user/me`,
           {
@@ -29,23 +30,36 @@ export default function Dashboard() {
         );
 
         if (!res.ok) {
-          alert("Faça login")
-          window.location.href = "/user/login";
+          alert("Sessão expirada. Faça login novamente.");
+          navigate("/user/login");
           return;
         }
 
         const data = await res.json();
-        setUserID(data.user_ID);
+        console.log("Dados do usuário:", data);
+        
+        // CORREÇÃO: O backend retorna 'userID', não 'user_ID'
+        const userId = data.userID || data.user_ID;
+        
+        if (!userId) {
+          console.error("UserID não encontrado na resposta:", data);
+          alert("Erro ao carregar dados do usuário");
+          navigate("/user/login");
+          return;
+        }
+        
+        setUserID(userId);
+        await fetchColeiras(userId);
 
-        await fetchColeiras(data.user_ID);
-
+        // Atualizar coleiras a cada 7 segundos
         fetchInterval = setInterval(() => {
-          fetchColeiras(data.user_ID);
+          fetchColeiras(userId);
         }, 7000);
 
       } catch (error) {
         console.error("Erro na inicialização:", error);
-        window.location.href = "/user/login";
+        alert("Erro ao conectar com o servidor");
+        navigate("/user/login");
       } finally {
         setLoading(false);
       }
@@ -56,63 +70,49 @@ export default function Dashboard() {
     return () => {
       if (fetchInterval) clearInterval(fetchInterval);
     };
-  }, []);
+  }, [baseURL, navigate]);
 
   async function fetchColeiras(id) {
     try {
       const res = await fetch(
         `${baseURL}api/coleira/${id}`,
         {
+          method: "GET",
           credentials: "include"
         }
       );
 
       if (!res.ok) {
-        console.error("Erro ao buscar coleiras");
+        if (res.status === 401) {
+          alert("Sessão expirada. Faça login novamente.");
+          navigate("/user/login");
+          return;
+        }
+        console.error("Erro ao buscar coleiras:", res.status);
         return;
       }
 
       const data = await res.json();
-      setColeiras(data);
+      console.log("Coleiras recebidas:", data);
+      setColeiras(Array.isArray(data) ? data : []);
+      
     } catch (error) {
       console.error("Erro ao buscar coleiras:", error);
     }
   }
 
-  // useEffect(() => {
-  //   if (!userID || coleiras.length === 0) return;
-
-  //   const updateInterval = setInterval(async () => {
-  //     try {
-  //       const updatePromises = coleiras.map(async (c) => {
-  //         const payload = {
-  //           idColeira: c.idColeira,
-  //           userID,
-  //           latitude: (c.latitude ?? 0) + (Math.random() * 0.0002 - 0.0001),
-  //           longitude: (c.longitude ?? 0) + (Math.random() * 0.0002 - 0.0001)
-  //         };
-
-  //         return fetch(`${baseURL}devices/${c.idColeira}/coords`, {
-  //           method: "PUT",
-  //           credentials: "include",
-  //           headers: {
-  //             "Content-Type": "application/json"
-  //           },
-  //           body: JSON.stringify(payload)
-  //         });
-  //       });
-
-  //       await Promise.all(updatePromises);
-  //     } catch (error) {
-  //       console.error("Erro ao atualizar coordenadas:", error);
-  //     }
-  //   }, 3000);
-
-  //   return () => clearInterval(updateInterval);
-  // }, [coleiras, userID]);
-
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+
+    if (!newDevice.name.trim()) {
+      alert("Por favor, insira um nome para a coleira");
+      return;
+    }
+
+    if (!newDevice.maxDistance || newDevice.maxDistance < 1) {
+      alert("Por favor, insira uma distância válida");
+      return;
+    }
 
     try {
       const res = await fetch(
@@ -124,7 +124,7 @@ export default function Dashboard() {
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            nomeColeira: newDevice.name,
+            nomeColeira: newDevice.name.trim(),
             userID,
             distanciaMaxima: Number(newDevice.maxDistance),
             latitude: 0,
@@ -134,18 +134,19 @@ export default function Dashboard() {
       );
 
       if (!res.ok) {
-        const errorData = await res.json();
+        const errorData = await res.json().catch(() => ({ message: "Erro desconhecido" }));
         alert(errorData.message || "Erro ao adicionar coleira");
         return;
       }
 
+      alert("Coleira adicionada com sucesso!");
       setShowForm(false);
       setNewDevice({ name: "", maxDistance: "" });
       await fetchColeiras(userID);
 
     } catch (error) {
       console.error("Erro ao criar coleira:", error);
-      alert("Erro ao adicionar coleira.");
+      alert("Erro ao adicionar coleira. Verifique sua conexão.");
     }
   };
 
@@ -154,26 +155,25 @@ export default function Dashboard() {
 
     try {
       const res = await fetch(
-  `${baseURL}api/coleira/${idColeira}`,
-  {
-    method: "DELETE",
-    credentials: "include"
-  }
-);
+        `${baseURL}api/coleira/${idColeira}`,
+        {
+          method: "DELETE",
+          credentials: "include"
+        }
+      );
 
       if (!res.ok) {
-        const err = await res.json();
+        const err = await res.json().catch(() => ({ message: "Erro desconhecido" }));
         alert(err.message || "Erro ao excluir coleira");
         return;
       }
 
-      setColeiras(prev =>
-        prev.filter(c => c.idColeira !== idColeira)
-      );
+      alert("Coleira excluída com sucesso!");
+      setColeiras(prev => prev.filter(c => c.idColeira !== idColeira));
 
     } catch (error) {
       console.error("Erro ao deletar coleira:", error);
-      alert("Erro ao excluir coleira.");
+      alert("Erro ao excluir coleira. Verifique sua conexão.");
     }
   }
 
@@ -182,7 +182,10 @@ export default function Dashboard() {
       <>
         <HeaderDashBoard />
         <main className={styles.dashboard}>
-          <p>Carregando...</p>
+          <div className={styles.loading}>
+            <i className="fa-solid fa-spinner fa-spin" style={{ fontSize: '3rem', color: '#4A90E2' }}></i>
+            <p>Carregando...</p>
+          </div>
         </main>
       </>
     );
@@ -198,18 +201,21 @@ export default function Dashboard() {
             <h2>Adicionar Nova Coleira</h2>
 
             <input 
-              placeholder="Nome" 
+              type="text"
+              placeholder="Nome da Coleira" 
               value={newDevice.name} 
               onChange={e => setNewDevice({ ...newDevice, name: e.target.value })} 
               required
+              maxLength={50}
             />
             <input 
-              inputMode="numeric" 
+              type="number"
               placeholder="Distância Máxima em Metros (Raio)" 
               value={newDevice.maxDistance} 
               onChange={e => setNewDevice({ ...newDevice, maxDistance: e.target.value })} 
               required 
-              min={1} 
+              min={1}
+              max={10000}
             />
 
             <div className={styles.formButtons}>
@@ -221,7 +227,11 @@ export default function Dashboard() {
 
         <div className={styles['coleiras-grid']}>
           {coleiras.length === 0 ? (
-            <h1>Nenhuma coleira cadastrada. Adicione uma nova coleira!</h1>
+            <div className={styles.emptyState}>
+              <i className="fa-solid fa-dog" style={{ fontSize: '4rem', color: '#ccc', marginBottom: '1rem' }}></i>
+              <h2>Nenhuma coleira cadastrada</h2>
+              <p>Adicione uma nova coleira para começar o rastreamento!</p>
+            </div>
           ) : (
             coleiras.map(device => (
               <DashboardCard
