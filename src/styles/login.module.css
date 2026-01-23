@@ -35,8 +35,13 @@ body{
     height: 12em;
     width: 12em;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: transform 0.3s;
 }
 
+.logo:hover {
+  transform: scale(1.05);
+}
 
 .login_box {
     display: flex;

@@ -26,13 +26,9 @@ body {
 
 a {
   font-weight: 500;
-  color: #2563eb;
   text-decoration: none;
 }
 
-a:hover {
-  color: #1d4ed8;
-}
 
 button {
   border-radius: 8px;
