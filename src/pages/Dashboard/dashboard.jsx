@@ -11,13 +11,15 @@ export default function Dashboard() {
   const [newDevice, setNewDevice] = useState({ name: '', maxDistance: '' });
   const [loading, setLoading] = useState(true);
   const baseURL =  import.meta.env.VITE_API_URL;
-
+  const [errorMessage , setErrorMessage] = useState("");
   const toggleForm = () => setShowForm(prev => !prev);
 
   useEffect(() => {
     let fetchInterval;
 
     async function init() {
+      setErrorMessage("")
+
       try {
         // valida sessão
         const res = await fetch(
@@ -35,13 +37,14 @@ export default function Dashboard() {
         }
 
         const data = await res.json();
+
         setUserID(data.user_ID);
 
         await fetchColeiras(data.user_ID);
 
         fetchInterval = setInterval(() => {
           fetchColeiras(data.user_ID);
-        }, 7000);
+        }, 5000);
 
       } catch (error) {
         console.error("Erro na inicialização:", error);
@@ -61,7 +64,7 @@ export default function Dashboard() {
   async function fetchColeiras(id) {
     try {
       const res = await fetch(
-        `${baseURL}api/coleira/${id}`,
+        `${baseURL}api/coleiras/${id}`,
         {
           credentials: "include"
         }
@@ -81,6 +84,12 @@ export default function Dashboard() {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage("")
+
+    const coordenadasDoIF = {
+    'latitude': -22.948797944778388,
+    'longitude': -46.55866095924524
+    }
 
     try {
       const res = await fetch(
@@ -95,43 +104,42 @@ export default function Dashboard() {
             nomeColeira: newDevice.name,
             userID,
             distanciaMaxima: Number(newDevice.maxDistance),
-            latitude: 0,
-            longitude: 0
+            latitude: coordenadasDoIF['latitude'],
+            longitude: coordenadasDoIF['longitude']
           })
         }
       );
 
       if (!res.ok) {
         const errorData = await res.json();
-        alert(errorData.message || "Erro ao adicionar coleira");
+        setErrorMessage(`${errorData.message}`)
         return;
       }
 
       setShowForm(false);
+      setErrorMessage("")
       setNewDevice({ name: "", maxDistance: "" });
       await fetchColeiras(userID);
 
     } catch (error) {
       console.error("Erro ao criar coleira:", error);
-      alert("Erro ao adicionar coleira.");
+      setErrorMessage("Erro ao adicionar coleira.")
     }
   };
 
   async function handleDeleteColeira(idColeira) {
-    if (!confirm("Tem certeza que deseja excluir esta coleira?")) return;
-
     try {
       const res = await fetch(
-  `${baseURL}api/coleira/${idColeira}`,
-  {
-    method: "DELETE",
-    credentials: "include"
-  }
-);
+        `${baseURL}api/coleira/${idColeira}`,
+        {
+          method: "DELETE",
+          credentials: "include"
+        }
+      );
 
       if (!res.ok) {
         const err = await res.json();
-        alert(err.message || "Erro ao excluir coleira");
+        setErrorMessage("Erro ao excluir coleira")
         return;
       }
 
@@ -141,7 +149,7 @@ export default function Dashboard() {
 
     } catch (error) {
       console.error("Erro ao deletar coleira:", error);
-      alert("Erro ao excluir coleira.");
+      setErrorMessage("Erro ao excluir coleira.")
     }
   }
 
@@ -151,6 +159,7 @@ export default function Dashboard() {
         <HeaderDashBoard />
         <main className={styles.dashboard}>
           <p>Carregando...</p>
+          
         </main>
       </>
     );
@@ -179,6 +188,8 @@ export default function Dashboard() {
               required 
               min={1} 
             />
+
+            {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
 
             <div className={styles.formButtons}>
               <button type="button" onClick={toggleForm}>Cancelar</button>

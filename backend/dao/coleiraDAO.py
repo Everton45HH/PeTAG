@@ -5,8 +5,6 @@ class ColeiraDAO(Database):
     def createColeiraDAO(self, coleira):
         conn, cursor = self.get_connection()
         try:
-            # Verifica se já existe uma coleira com este nome para este usuário
-            # Nota: Ajustado para buscar por nome dentro do contexto do usuário
             query_check = "SELECT idColeira FROM Coleira WHERE nomeColeira = %s AND userID = %s"
             cursor.execute(query_check, (coleira["nomeColeira"], coleira["userID"]))
             if cursor.fetchone():
@@ -33,22 +31,21 @@ class ColeiraDAO(Database):
             cursor.close()
             conn.close()
 
-    def getColeirasDAO(self, id_coleira):
+    def getColeiraDAO(self, id_coleira):
         conn, cursor = self.get_connection()
         try:
             # Placeholder alterado para %s
             query = "SELECT idColeira, userID, nomeColeira, longitude, latitude, distanciaMaxima FROM Coleira WHERE idColeira = %s"
             cursor.execute(query, (id_coleira,))
             row = cursor.fetchone()
-
             if row:
                 coleira = {
-                    'idColeira': row[0],
-                    'userID': row[1],
-                    'nomeColeira': row[2],
-                    'longitude': row[3],
-                    'latitude': row[4],
-                    'distanciaMaxima': row[5]
+                "idcoleira" : row["idcoleira"],
+                "userid" : row["userid"], 
+                "nomecoleira" : row["nomecoleira"], 
+                "longitude" : row["longitude"], 
+                "latitude" : row["latitude"],
+                "disntanciaMaxima" : row["distanciamaxima"]
                 }
                 return coleira, None
             return None, 404
@@ -65,15 +62,14 @@ class ColeiraDAO(Database):
             query = "SELECT idColeira, userID, nomeColeira, longitude, latitude, distanciaMaxima FROM Coleira WHERE userID = %s"
             cursor.execute(query, (user_id,))
             rows = cursor.fetchall()
-            
             coleiras = [
                 {
-                    'idColeira': row[0], 
-                    'userID': row[1], 
-                    'nomeColeira': row[2], 
-                    'longitude': row[3], 
-                    'latitude': row[4], 
-                    'distanciaMaxima': row[5]
+                    'idColeira': row['idcoleira'], 
+                    'userID': row['userid'], 
+                    'nomeColeira': row['nomecoleira'], 
+                    'longitude': row['longitude'], 
+                    'latitude': row['latitude'], 
+                    'distanciaMaxima': row['distanciamaxima']
                 } for row in rows
             ]
             return coleiras, None

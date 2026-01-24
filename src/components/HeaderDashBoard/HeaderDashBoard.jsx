@@ -1,5 +1,5 @@
 import { Menu, Search, User } from 'lucide-react';
-import styles from '../../styles/header.module.css';
+import styles from '../../styles/headerDashboard.module.css';
 
 export default function HeaderDashBoard({
   onMenuClick,
@@ -18,29 +18,35 @@ export default function HeaderDashBoard({
 
   return (
 
-    <header className={styles.header}>
+    <div>
 
-      <div className={styles.headerLeft}>
+        <header className={styles.header}>
 
-        <button onClick={onMenuClick} className={styles.headerButton}>
-        <Menu />
-        </button>
+        <div className={styles.headerLeft}>
 
-      </div>
+          <button onClick={onMenuClick} className={styles.headerButton}>
+          <Menu />
+          </button>
+
+        </div>
+      
+        <h1>PeTAG</h1>    
+
+        <div className={styles.headerRight}>
+
+          <button onClick={onSearchClick} className={styles.headerButtonRound}>
+            <Search />
+          </button>
+
+          <button onClick={handleLogout} className={styles.headerButtonRound}>
+            <User />
+          </button>
+          
+        </div>
+      </header>
+
+
+    </div>
     
-      <h1>PeTAG</h1>    
-
-      <div className={styles.headerRight}>
-
-        <button onClick={onSearchClick} className={styles.headerButtonRound}>
-          <Search />
-        </button>
-
-        <button onClick={handleLogout} className={styles.headerButtonRound}>
-          <User />
-        </button>
-        
-      </div>
-    </header>
   );
 }

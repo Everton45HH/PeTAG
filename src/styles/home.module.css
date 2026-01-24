@@ -213,6 +213,9 @@ a {
   border-radius: 12px;
   color: white;
 }
+.about h2{
+  margin-top: 0;
+}
 
 .row_photos {
   display: flex;
