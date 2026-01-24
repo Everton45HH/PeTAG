@@ -69,6 +69,7 @@ def login():
         access_token_cookie = create_access_token(aux)
         response = jsonify({"login" : True })
         set_access_cookies(response, access_token_cookie)
+
         return response, 200
     else:
         return jsonify({"message": "Senha incorreta"}), 401

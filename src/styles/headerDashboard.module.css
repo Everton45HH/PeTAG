@@ -10,7 +10,7 @@
 
   display: flex;
   align-items: center;
-  padding: 0 0.1rem;
+  padding: 0 0.3rem;
 }
 
 .headerLeft {
@@ -29,7 +29,7 @@
 }
 
 .headerRight {
-  flex: 1; 
+  flex: 1;
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -38,7 +38,7 @@
 .headerButton svg,
 .headerButtonRound svg {
   width:  1.7em;
-  height: 1.2em;
+  height: 100%;
 }
 
 .headerButton,

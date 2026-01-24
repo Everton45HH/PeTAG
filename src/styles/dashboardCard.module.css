@@ -10,7 +10,6 @@
   transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
-
 .device-card:hover {
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   transform: translateY(-2px);
@@ -24,41 +23,53 @@
 .device-info h3 {
   font-size: 1.25rem;
   font-weight: 600;
-  margin-top: 0;
-  padding: 0.1rem 0.2rem;
-  
 }
 
 .device-type-badge {
   font-size: 0.875rem;
   text-align: center;
   top : 0;
-  background-color: #6b7280a9;
+  background-color: #95abd8a9;
   border-radius: 100px;
   padding: 0.1rem 0.5rem;
 }
 
-.device-type-collar {
-  padding: 0;
-  color: #1e40af;
-}
-
 .device-settings-button {
   padding: 0.5rem;
-  margin: auto 0;
-  border-radius: 999px;
-  background: transparent;
-  height: max-content;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
-}
-
-.device-settings-button:hover {
-  background-color: #f3f4f6;
+  padding: 0;
 }
 
 .device-delete-button{
+  color: red;
+  background-color: white;
+  margin: 0;
+  padding: 0;
+  width: min-content;
+}
+
+
+.device-delete-button , .device-settings-button {
+  width: 3em;
+  height: 3em;
+  border-radius: 10px;
+}
+
+.device-delete-button:hover , .device-settings-button:hover{
+  opacity: 0.5;
+}
+
+.device-delete-button:hover{
   background-color: red;
+  color: white;
+}
+
+.device-settings-button{
+  background-color: white  ;
+}
+
+.device-settings-button:hover{
+  background-color: gray;
   color: white;
 }
 
@@ -153,4 +164,9 @@
   display: flex;
   justify-content: center;
   flex-direction: column;
+}
+
+.device-actions{
+  display: flex;
+  align-items: flex-end;
 }

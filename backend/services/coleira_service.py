@@ -13,6 +13,14 @@ def create_coleira(info):
 
 def get_all_coleiras(id):
     response , error = daoService.getAllColeirasDAO(id)
+    if error:
+        return None , error
+    return response , error
+
+def get_coleira(id):
+    response , error = daoService.getColeiraDAO(id)
+    if error:
+        return None , error
     return response , error
 
 def delete_coleira(id_coleira, userID):

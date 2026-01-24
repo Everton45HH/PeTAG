@@ -8,7 +8,7 @@ export default function Register() {
   const navigate = useNavigate();
 
   const [nome, setNome] = useState("");
-  const [telefone, setTelefone] = useState("");
+  const [telefone, setTelefone] = useState(0);
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -37,7 +37,6 @@ export default function Register() {
 
       if (response.ok) {
         setErrorMessage("");
-        alert("Conta criada com sucesso! Faça login.");
         navigate("/user/login");
       } else {
         console.error("Erro ao registrar:", data.message);
@@ -70,16 +69,6 @@ export default function Register() {
             name="nome" 
             value={nome}
             onChange={(e) => setNome(e.target.value)} 
-          />
-
-          <label htmlFor="telefone">Telefone</label>
-          <input 
-            type="tel"
-            required 
-            placeholder="Digite seu Telefone" 
-            name="telefone" 
-            value={telefone}
-            onChange={(e) => setTelefone(e.target.value)} 
           />
 
           <label htmlFor="email">Email</label>

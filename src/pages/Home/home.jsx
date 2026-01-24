@@ -67,7 +67,7 @@ export default function Home() {
 
         <section id="quem-somos" className={styles.about}>
 
-            <h2>QUEM SOMOS?</h2>
+            <h2>QUEM SOMOS NÓS?</h2>
               
               <div className={styles.row_photos}>
 
