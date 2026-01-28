@@ -1,7 +1,5 @@
-import { useEffect, useState } from "react";
-import ActionButtons from '../../components/ActionButtons/ActionButtons.jsx';
+import { useEffect, useState , useRef } from "react";
 import MenuColeira from '../../components/MenuColeira/MenuColeira.jsx';
-
 import DashboardCard from '../../components/DashboardCard/DashboardCard.jsx';
 import HeaderDashBoard from '../../components/HeaderDashBoard/HeaderDashBoard.jsx';
 import styles from '../../styles/dashboard.module.css';
@@ -12,56 +10,98 @@ export default function Dashboard() {
   const [userID, setUserID] = useState(null);
   const [newDevice, setNewDevice] = useState({ name: '', maxDistance: '' });
   const [loading, setLoading] = useState(true);
-  const baseURL =  import.meta.env.VITE_API_URL;
-  const [errorMessage , setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const baseURL = import.meta.env.VITE_API_URL;
   const toggleForm = () => setShowForm(prev => !prev);
+  const simulationIntervalRef = useRef(null);
+  const coleirasRef = useRef([]); 
+
 
   useEffect(() => {
-    let fetchInterval;
+  coleirasRef.current = coleiras;
+}, [coleiras]);
 
-    async function init() {
-      setErrorMessage("")
+  async function salvarUltimaLocalizacao(device) {
+  try {
+    await fetch(`${baseURL}api/coleira/${device.idColeira}/coords`, {
+      method: "PUT",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        latitude: device.latitude,
+        longitude: device.longitude
+      })
+    });
 
-      try {
-        // valida sessão
-        const res = await fetch(
-          `${baseURL}user/me`,
-          {
-            method: "GET",
-            credentials: "include"
-          }
-        );
+    console.log("Última localização salva no banco");
+  } catch (err) {
+    console.error("Erro ao salvar última localização", err);
+  }
+}
+async function simulate() {
+  if (simulationIntervalRef.current) return;
+  if (coleirasRef.current.length === 0) return;
 
-        if (!res.ok) {
-          alert("Faça login")
-          window.location.href = "/user/login";
-          return;
-        }
+  const startTime = Date.now();
 
-        const data = await res.json();
+  simulationIntervalRef.current = setInterval(() => {
+    const elapsed = Date.now() - startTime;
 
-        setUserID(data.user_ID);
+    if (elapsed >= 30000) {
+      clearInterval(simulationIntervalRef.current);
+      simulationIntervalRef.current = null;
 
-        await fetchColeiras(data.user_ID);
+      coleirasRef.current.forEach(device => {
+        salvarUltimaLocalizacao(device);
+      });
 
-        fetchInterval = setInterval(() => {
-          fetchColeiras(data.user_ID);
-        }, 5000);
-
-      } catch (error) {
-        console.error("Erro na inicialização:", error);
-        window.location.href = "/user/login";
-      } finally {
-        setLoading(false);
-      }
+      console.log("🧪 Simulação encerrada e salva no banco");
+      return;
     }
 
-    init();
+    setColeiras(prev =>
+      prev.map(device => ({
+        ...device,
+        latitude: device.latitude + (Math.random() - 0.5) * 0.00005,
+        longitude: device.longitude + (Math.random() - 0.5) * 0.00005
+      }))
+    );
+  }, 1000);
+}
 
-    return () => {
-      if (fetchInterval) clearInterval(fetchInterval);
-    };
-  }, []);
+  useEffect(() => {
+    async function init() {
+    try {
+      const res = await fetch(`${baseURL}user/me`, {
+        credentials: "include"
+      });
+
+      if (!res.ok) {
+        window.location.href = "/user/login";
+        return;
+      }
+
+      const data = await res.json();
+      setUserID(data.user_ID);
+
+      await fetchColeiras(data.user_ID);
+
+    } catch (err) {
+      window.location.href = "/user/login";
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  init();
+
+  return () => {
+    if (simulationIntervalRef.current)
+      clearInterval(simulationIntervalRef.current);
+  };
+}, []);
 
   async function fetchColeiras(id) {
     try {
@@ -214,7 +254,7 @@ export default function Dashboard() {
           )}
         </div>
         
-        <MenuColeira onAddCollar={toggleForm} ></MenuColeira>
+        <MenuColeira onAddCollar={toggleForm} onSimulate={simulate} ></MenuColeira>
       </main>
     </>
   );

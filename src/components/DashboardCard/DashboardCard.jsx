@@ -71,7 +71,7 @@ export default function DashboardCard({ device, onDelete }) {
         setMapHtml('<div style="display:flex;align-items:center;justify-content:center;height:100%;background:#ffebee;color:#c62828;">Erro ao carregar mapa</div>');
         setLoading(false);
       });
-  }, [device.latitude, device.longitude, device.idColeira, device.distanciaMaxima, baseURL]); // ✅ Dependências completas
+  }, [device.latitude, device.longitude, device.idColeira, device.distanciaMaxima, baseURL]);
 
   return (
     <div className={styles['device-card']}>
@@ -83,22 +83,7 @@ export default function DashboardCard({ device, onDelete }) {
           position: 'relative'
         }}
       >
-        {loading && (
-          <div style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            background: 'rgba(255,255,255,0.8)',
-            zIndex: 10
-          }}>
-            Carregando mapa...
-          </div>
-        )}
+        
         <div dangerouslySetInnerHTML={{ __html: mapHtml }}/>
       </div>
 
