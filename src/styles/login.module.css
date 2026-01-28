@@ -109,8 +109,6 @@ body{
     flex-wrap: wrap;
 }
 
-/* versão do segundo CSS dizia "display:none"  
-   → deixei configurável abaixo */
 .social_login.hidden {
     display: none;
 }

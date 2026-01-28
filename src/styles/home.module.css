@@ -14,7 +14,6 @@ html {
   transform: scale(1.05);
 }
 
-/* Navbar com gradiente */
 .nav_bar {
   background: linear-gradient(135deg, var(--secondary-blue) 0%, var(--secondary-blue-dark) 100%);
   display: flex;
