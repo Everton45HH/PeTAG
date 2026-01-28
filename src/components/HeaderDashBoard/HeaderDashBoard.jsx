@@ -22,30 +22,27 @@ export default function HeaderDashBoard({
 
         <header className={styles.header}>
 
-        <div className={styles.headerLeft}>
+  <div className={styles.headerLeft}>
+    <button onClick={onMenuClick} className={styles.headerButton}>
+      <Menu />
+    </button>
+  </div>
 
-          <button onClick={onMenuClick} className={styles.headerButton}>
-          <Menu />
-          </button>
+  <div className={styles.headerCenter}>
+    <h1 className={styles.headerTitle}>PeTAG</h1>
+  </div>
 
-        </div>
-      
-        <h1>PeTAG</h1>    
+  <div className={styles.headerRight}>
+    <button onClick={onSearchClick} className={styles.headerButtonRound}>
+      <Search />
+    </button>
 
-        <div className={styles.headerRight}>
+    <button onClick={handleLogout} className={styles.headerButtonRound}>
+      <User />
+    </button>
+  </div>
 
-          <button onClick={onSearchClick} className={styles.headerButtonRound}>
-            <Search />
-          </button>
-
-          <button onClick={handleLogout} className={styles.headerButtonRound}>
-            <User />
-          </button>
-          
-        </div>
-      </header>
-
-
+</header>
     </div>
     
   );

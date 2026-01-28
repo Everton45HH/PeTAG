@@ -89,7 +89,7 @@ body{
 
 .senha_box .button_eye {
     position: absolute;
-    right: -1.5em;
+    right: -0.8em;
     top: 50%;
     transform: translateY(-50%);
     border: none;

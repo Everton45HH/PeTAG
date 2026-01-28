@@ -14,21 +14,20 @@ html {
   transform: scale(1.05);
 }
 
+/* Navbar com gradiente */
 .nav_bar {
-  background-color: #4A90E2;
+  background: linear-gradient(135deg, var(--secondary-blue) 0%, var(--secondary-blue-dark) 100%);
   display: flex;
   width: 100%;
   align-items: center;
   height: 6.5em;
   padding: 0 4em;
-  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-lg);
   position: fixed;
   top: 0;
   left: 0;
   color: white;
   z-index: 1000;
-  flex-wrap: nowrap;
-  text-wrap: nowrap;
 }
 
 .nav_list {
@@ -46,12 +45,12 @@ html {
   text-decoration: none;
   white-space: nowrap;
   padding: 0.5em 1em;
-  border-radius: 6px;
+  border-radius: 8px;
   transition: all 0.3s;
 }
 
 .nav_link:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.15);
   transform: translateY(-2px);
 }
 
@@ -62,57 +61,68 @@ a {
 
 .homeContainer {
   margin-top: 6.5em;
+  background: linear-gradient(to bottom, var(--gray-50) 0%, white 100%);
+  min-height: calc(100vh - 6.5em);
+
+  display: flex;
+  flex-direction: column;
 }
 
 .mainContent {
   flex: 1;
   padding: 20px;
-  height: auto;
 }
 
 .welcome {
   text-align: center;
-  padding: 2em 2em;
-  background: #8fd460 ;
-  border-radius: 12px;
+  padding: 4em 2em;
+  background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-green-dark) 100%);
+  border-radius: 16px;
+  box-shadow: var(--shadow-xl);
+  margin-bottom: 3em;
 }
 
 .welcome h1 {
   font-size: 3rem;
   color: white;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  margin-bottom: 0.5em;
 }
 
 .welcome p {
   font-size: 1.5rem;
   color: white;
-  }
+  margin-bottom: 2em;
+  opacity: 0.95;
+}
 
 .ctaButtons {
   display: flex;
-  gap: 2em;
+  gap: 1.5em;
   justify-content: center;
   flex-wrap: wrap;
 }
 
 .btnPrimary,
 .btnSecondary {
-  padding: 1em 2em;
-  border-radius: 8px;
+  padding: 1em 2.5em;
+  border-radius: 10px;
   text-decoration: none;
   font-weight: 600;
   font-size: 1.1rem;
   transition: all 0.3s;
+  box-shadow: var(--shadow-md);
 }
 
 .btnPrimary {
   background-color: white;
-  color: #8fd460;
+  color: var(--primary-green);
 }
 
 .btnPrimary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-xl);
+  background-color: var(--gray-50);
 }
 
 .btnSecondary {
@@ -123,98 +133,114 @@ a {
 
 .btnSecondary:hover {
   background-color: white;
-  color: #8fd460;
+  color: var(--primary-green);
+  transform: translateY(-3px);
 }
 
-.features {
-  max-width: 70em;
+.intro {
+  text-align: center;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--secondary-blue-dark) 0%, var(--secondary-blue) 100%);
+  max-width: 58em;
   margin: 0 auto 3em;
-  padding: 1em 2em;
+  padding: 3em 2em;
+  box-shadow: var(--shadow-lg);
 }
 
-.features h2 {
+.intro_h2,
+.feature_h2 {
   text-align: center;
   font-size: 2.5rem;
-  margin-bottom: 40px;
-  color: #ffffff;
-}
-
-.featureGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  column-gap: 2em;
-}
-
-.featureCard {
-  background: white;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  transition: all 0.3s;
-}
-
-.featureCard:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-}
-
-.featureCard i {
-  font-size: 3rem;
-  color: #8fd460;
-  margin-bottom: 20px;
-}
-
-.featureCard h3 {
-  font-size: 1.5rem;
-  margin-bottom: 15px;
-  color: #333;
-}
-
-.featureCard p {
-  color: #666;
-  line-height: 1.6;
-}
-
-.intro{
-  text-align: center;
-  font-size: 1.2em;
-  border-radius: 10px;
-  background-color: rgb(58, 98, 151);
+  color: black;
 }
 
 .intro_h2 {
   text-align: center;
   font-size: 2.5rem;
-  color: #ffffff;
+  color: black;
+}
+
+.blue {
+  color: #0997FE;
+  font-weight: 700;
 }
 
 .description {
-  max-width: 53em;
   line-height: 1.8;
-  margin: 0 auto 2em;
+  margin: 0 auto;
 }
 
 .description p {
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   color: white;
+  margin-bottom: 1em;
 }
 
 .description strong {
   font-weight: 600;
 }
 
+/* Seção de funcionalidades */
+.features {
+  max-width: 70em;
+  margin: 0 auto 3em;
+  padding: 2em;
+}
+
+.featureGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2em;
+}
+
+.featureCard {
+  background: white;
+  padding: 2em;
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+  text-align: center;
+  transition: all 0.3s;
+  border: 1px solid var(--gray-100);
+}
+
+.featureCard:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--primary-green-light);
+}
+
+.featureCard i {
+  font-size: 3rem;
+  color: var(--primary-green);
+  margin-bottom: 1em;
+}
+
+.featureCard h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5em;
+  color: var(--gray-900);
+}
+
+.featureCard p {
+  color: var(--gray-600);
+  line-height: 1.6;
+}
+
+/* Seção Quem Somos */
 .about {
   max-width: 70em;
   margin: 0 auto 3em;
   padding: 3em 2em;
   text-align: center;
-  background: #4A90E2;
-  border-radius: 12px;
+  background: linear-gradient(135deg, var(--secondary-blue) 0%, var(--secondary-blue-dark) 100%);
+  border-radius: 16px;
   color: white;
+  box-shadow: var(--shadow-xl);
 }
-.about h2{
-  margin-top: 0;
+
+.about h2 {
+  font-size: 2.5rem;
+  margin-bottom: 2em;
 }
 
 .row_photos {
@@ -243,12 +269,15 @@ a {
   background-color: white;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s;
+  border: 4px solid rgba(255, 255, 255, 0.3);
 }
 
 .photo:hover {
-  transform: scale(1.05);
+  transform: scale(1.1);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+  border-color: white;
 }
 
 .photo img {
@@ -259,7 +288,8 @@ a {
 }
 
 .photo i {
-  color: #4A90E2;
+  color: var(--secondary-blue);
+  font-size: 3rem;
 }
 
 .person p {
@@ -270,29 +300,31 @@ a {
 }
 
 .footer {
-  background-color: #333;
+  background: linear-gradient(135deg, var(--gray-900) 0%, var(--gray-700) 100%);
   color: white;
   text-align: center;
-  padding: 20px;
-  margin-top: 2em;
-  width: 100%;
+  padding: 2em;
+  width: 100%;  
 }
 
 .footer p {
   margin: 0;
+  opacity: 0.9;
 }
 
+/* Responsividade */
 @media (max-width: 768px) {
   .nav_bar {
     height: auto;
-    padding: 1em;
+    min-height: 8em;
+    padding: 1em 2em;
     flex-direction: column;
+    justify-content: center;
     gap: 1em;
   }
 
   .logo {
-    height: 4em;
-    width: 4em;
+    display: none;
   }
 
   .nav_list {
@@ -302,7 +334,12 @@ a {
   }
 
   .homeContainer {
-    margin-top: 10em;
+    margin-top: 8em; /* Ajusta para altura do navbar mobile */
+    min-height: calc(100vh - 8em);
+  }
+
+  .mainContent {
+    padding: 1em;
   }
 
   .welcome {
@@ -317,14 +354,23 @@ a {
     font-size: 1.2rem;
   }
 
-  .features h2,
-  .about h2 {
+  .intro {
+    padding: 2em 1.5em;
+  }
+
+  .description p {
+    font-size: 1rem;
+  }
+
+  .about h2,
+  .intro_h2,
+  .feature_h2 {
     font-size: 2rem;
   }
 
   .photo {
-    width: 120px;
-    height: 120px;
+    width: 7em;
+    height: 7em;
   }
 
   .person {
@@ -338,6 +384,16 @@ a {
 }
 
 @media (max-width: 480px) {
+  .nav_bar {
+    min-height: 10em;
+    padding: 1em;
+  }
+
+  .homeContainer {
+    margin-top: 10em; /* Ajusta para navbar mobile pequeno */
+    min-height: calc(100vh - 10em);
+  }
+
   .welcome {
     padding: 2em 1em;
   }
@@ -350,14 +406,27 @@ a {
     font-size: 1rem;
   }
 
+  .intro {
+    padding: 2em 1em;
+  }
+
+  .intro_h2,
+  .feature_h2 {
+    font-size: 1.5rem;
+  }
+
+  .description p {
+    font-size: 0.9rem;
+  }
+
   .features,
   .about {
     padding: 2em 1em;
   }
 
   .photo {
-    width: 100px;
-    height: 100px;
+    width: 6em;
+    height: 6em;
   }
 
   .person {
