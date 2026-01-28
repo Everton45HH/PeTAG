@@ -37,7 +37,7 @@ export default function DashboardCard({ device, onDelete }) {
     const percentage = (current / max) * 100;
     
     if (percentage < 50) return styles['progress-green'];
-    if (percentage < 80) return styles['progress-yellow'];
+    if (percentage > 51 && percentage < 99) return styles['progress-yellow'];
     return styles['progress-red'];
   };
 
