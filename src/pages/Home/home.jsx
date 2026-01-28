@@ -5,7 +5,7 @@ import everton from '../../assets/images/everton.jpg';
 // import lucas from '../../assets/images/lucas.png';
 import julia from '../../assets/images/julia.png';
 import wagner from '../../assets/images/wagner.png';
-
+import ScrollToTop from 'react-scroll-to-top';
 
 export default function Home() {
   return (
@@ -31,12 +31,12 @@ export default function Home() {
           </div>
         </section>
 
-        <h2 className={styles.intro_h2}> SOBRE O PeTAG</h2>
+        <h2 className={styles.intro_h2}>SOBRE O <span className={styles.blue}>Pe</span>TAG</h2>
         <section className={styles.intro}>
 
           <div className={styles.description}>
             <p>
-              <strong>O PeTAG é um projeto acadêmico desenvolvido com o objetivo de simular um sistema de monitoramento de animais domésticos por meio de uma coleira inteligente e uma plataforma web.</strong> <strong>A aplicação permite visualizar informações como distância e localização de forma ilustrativa, demonstrando o funcionamento de soluções baseadas em IoT e monitoramento remoto.</strong>
+              <strong>O <span className={styles.blue}>Pe</span>TAG é um projeto acadêmico desenvolvido com o objetivo de simular um sistema de monitoramento de animais domésticos por meio de uma coleira inteligente e uma plataforma web.</strong> <strong>A aplicação permite visualizar informações como distância e localização de forma ilustrativa, demonstrando o funcionamento de soluções baseadas em IoT e monitoramento remoto.</strong>
             </p>
             <p>
               <strong>É importante destacar que todos os dados apresentados no sistema são simulados, não representando o rastreamento real de animais.</strong> <strong>O foco do projeto é educacional, voltado ao aprendizado de tecnologias como desenvolvimento web, APIs, autenticação de usuários e integração entre sistemas.</strong>
@@ -44,8 +44,8 @@ export default function Home() {
           </div>
         </section>
 
+        <h2 className={styles.feature_h2}>FUNCIONALIDADES</h2>
         <section className={styles.features}>
-          <h2>FUNCIONALIDADES</h2>
           <div className={styles.featureGrid}>
             <div className={styles.featureCard}>
               <i className="fa-solid fa-map-location-dot"></i>
@@ -55,7 +55,7 @@ export default function Home() {
             <div className={styles.featureCard}>
               <i className="fa-solid fa-bell"></i>
               <h3>Alertas Inteligentes</h3>
-              <p>Receba notificações quando seu pet sair da área segura</p>
+              <p>Receba um alerta quando seu pet sair da área segura (em desenvolvimento)</p>
             </div>
             <div className={styles.featureCard}>
               <i className="fa-solid fa-shield-dog"></i>
@@ -107,6 +107,8 @@ export default function Home() {
         </section>
       </main>
 
+      <ScrollToTop smooth top={window.innerHeight} color="#0997FE"/>
+      
       <footer className={styles.footer}>
         <p>&copy; 2025 PeTAG. Todos os direitos reservados.</p>
       </footer>

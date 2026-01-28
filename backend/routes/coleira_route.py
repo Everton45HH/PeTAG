@@ -30,8 +30,8 @@ def create():
     
     nome = str(info.get('nomeColeira', '')).strip()
     
-    if coleiras_existentes and len(coleiras_existentes) >= 3:
-        return jsonify({'message': "Limite de 3 coleiras atingido"}), 400
+    if coleiras_existentes and len(coleiras_existentes) >= 7:
+        return jsonify({'message': "Limite de 7 coleiras atingido"}), 400
     
     try:
         distancia = float(info.get('distanciaMaxima', 0))
@@ -284,3 +284,59 @@ def mapa_coleira(id_coleira):
     ).add_to(mapa)
 
     return mapa._repr_html_()
+
+
+@coleira_bp.route("/api/coleira/mapa/simulacao", methods=["POST"])
+@jwt_required(locations=["cookies"])
+def mapa_simulacao():
+    data = request.json or {}
+
+    # Coordenadas base (IF)
+    base_lat = -22.948797944778388
+    base_lon = -46.55866095924524
+
+    try:
+        latitude = float(data.get("latitude", base_lat))
+        longitude = float(data.get("longitude", base_lon))
+        distancia_maxima = float(data.get("distanciaMaxima", 100))
+    except (ValueError, TypeError):
+        return jsonify({'message': 'Dados inválidos'}), 400
+
+    # 🔀 Simulação de movimento
+    import random
+    latitude += random.uniform(-0.00005, 0.00005)
+    longitude += random.uniform(-0.00005, 0.00005)
+
+    # 🗺️ Mapa
+    mapa = folium.Map(
+        location=[latitude, longitude],
+        zoom_start=18,
+        control_scale=False,
+        height="100%"
+    )
+
+    folium.TileLayer(
+        tiles='https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
+        attr='Google',
+        name='Google Satellite',
+        subdomains=['mt0','mt1','mt2','mt3'],
+    ).add_to(mapa)
+
+    # Marker da coleira (simulada)
+    folium.Marker(
+        [latitude, longitude],
+        popup="Coleira (Simulação)",
+        icon=folium.Icon(color="blue", icon="paw", prefix="fa")
+    ).add_to(mapa)
+
+    # Círculo do raio permitido
+    folium.Circle(
+        location=[base_lat, base_lon],
+        radius=distancia_maxima,
+        color="red",
+        fill=True,
+        fill_opacity=0.15
+    ).add_to(mapa)
+
+    # ⚠️ IMPORTANTE: retorna HTML puro
+    return Response(mapa._repr_html_(), mimetype="text/html")

@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import ActionButtons from '../../components/ActionButtons/ActionButtons.jsx';
+import MenuColeira from '../../components/MenuColeira/MenuColeira.jsx';
+
 import DashboardCard from '../../components/DashboardCard/DashboardCard.jsx';
 import HeaderDashBoard from '../../components/HeaderDashBoard/HeaderDashBoard.jsx';
 import styles from '../../styles/dashboard.module.css';
@@ -211,8 +213,8 @@ export default function Dashboard() {
             ))
           )}
         </div>
-
-        <ActionButtons onAddCollar={toggleForm} />
+        
+        <MenuColeira onAddCollar={toggleForm} ></MenuColeira>
       </main>
     </>
   );

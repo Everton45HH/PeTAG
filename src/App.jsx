@@ -5,6 +5,7 @@ import Home from '../src/pages/Home/home.jsx';
 import Register from '../src/pages/Register/register.jsx';
 import Dashboard from '../src/pages/Dashboard/dashboard.jsx';
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import ScrollToTop from 'react-scroll-to-top'
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         {/* Redireciona rotas não encontradas para home */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      <ScrollToTop smooth />
     </Router>
   );
 }
