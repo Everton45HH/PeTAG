@@ -64,8 +64,8 @@ async function simulate() {
     setColeiras(prev =>
       prev.map(device => ({
         ...device,
-        latitude: device.latitude + (Math.random() - 0.5) * 0.00005,
-        longitude: device.longitude + (Math.random() - 0.5) * 0.00005
+        latitude: device.latitude + (Math.random() - 0.5) * 0.00009,
+        longitude: device.longitude + (Math.random() - 0.5) * 0.00009
       }))
     );
   }, 1000);
