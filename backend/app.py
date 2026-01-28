@@ -40,12 +40,14 @@ def create_app():
     allowed_origins = []
     
     if IS_PROD:
-        allowed_origins = ["https://petag-project.vercel.app"]
+        allowed_origins = ["https://petag-project.vercel.app" , "https://petag-project-mz0sq9pee-evertons-projects-28bbad75.vercel.app/"]
+            
     else:
         allowed_origins = [
             "http://localhost:5173",
             "http://127.0.0.1:5173",
-            "http://192.168.18.10:5173"
+            "http://192.168.18.10:5173",
+
         ]
 
     CORS(
