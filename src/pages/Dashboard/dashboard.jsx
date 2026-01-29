@@ -1,63 +1,100 @@
-import { useEffect, useState , useRef } from "react";
-import MenuColeira from '../../components/MenuColeira/MenuColeira.jsx';
-import DashboardCard from '../../components/DashboardCard/DashboardCard.jsx';
-import HeaderDashBoard from '../../components/HeaderDashBoard/HeaderDashBoard.jsx';
-import styles from '../../styles/dashboard.module.css';
+  import { useEffect, useState , useRef } from "react";
+  import MenuColeira from '../../components/MenuColeira/MenuColeira.jsx';
+  import DashboardCard from '../../components/DashboardCard/DashboardCard.jsx';
+  import HeaderDashBoard from '../../components/HeaderDashBoard/HeaderDashBoard.jsx';
+  import styles from '../../styles/dashboard.module.css';
+  import Alert from '@mui/material/Alert';
+  import CheckIcon from '@mui/icons-material/Check';
 
-export default function Dashboard() {
-  const [coleiras, setColeiras] = useState([]);
-  const [showForm, setShowForm] = useState(false);
-  const [userID, setUserID] = useState(null);
-  const [newDevice, setNewDevice] = useState({ name: '', maxDistance: '' });
-  const [loading, setLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState("");
-  const baseURL = import.meta.env.VITE_API_URL;
-  const toggleForm = () => setShowForm(prev => !prev);
-  const simulationIntervalRef = useRef(null);
-  const coleirasRef = useRef([]); 
+  export default function Dashboard() {
+    const [coleiras, setColeiras] = useState([]);
+    const [showForm, setShowForm] = useState(false);
+    const [ShowFormSettings, setShowFormSettings] = useState(false);
+    const [userID, setUserID] = useState(null);
+    const [newDevice, setNewDevice] = useState({ name: '', maxDistance: '' });
+    const [loading, setLoading] = useState(true);
+    const [errorMessage, setErrorMessage] = useState("");
+    const baseURL = import.meta.env.VITE_API_URL;
+    const [alertInfo, setAlertInfo] = useState({ show: false, message: '', severity: 'info' });
 
+    const toggleForm = () => {
+      setNewDevice({ name: '', maxDistance: '' });
+      setShowForm(prev => !prev)
+    };
+    const simulationIntervalRef = useRef(null);
+    const coleirasRef = useRef([]); 
+    const [selectedDevice, setSelectedDevice] = useState(null);
 
-  useEffect(() => {
-  coleirasRef.current = coleiras;
-}, [coleiras]);
+    const showAlert = (message, severity = 'success') => {
+    setAlertInfo({ show: true, message, severity });
+    setTimeout(() => {
+      setAlertInfo(prev => ({ ...prev, show: false }));
+    }, 3000);
+  };
 
-  async function salvarUltimaLocalizacao(device) {
-  try {
-    await fetch(`${baseURL}api/coleira/${device.idColeira}/coords`, {
-      method: "PUT",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        latitude: device.latitude,
-        longitude: device.longitude
-      })
-    });
+    const handleOpenSettings = (device) => {
+      setSelectedDevice(device);
+      setNewDevice({ name: device.nomeColeira, maxDistance: device.distanciaMaxima });
+      setShowFormSettings(true);
+    };
 
-    console.log("Última localização salva no banco");
-  } catch (err) {
-    console.error("Erro ao salvar última localização", err);
+    const toggleFormSettings = () => {
+      setShowFormSettings(false);
+      setSelectedDevice(null);
+      setNewDevice({ name: '', maxDistance: '' });
+    };
+
+    useEffect(() => {
+    coleirasRef.current = coleiras;
+  }, [coleiras]);
+
+    async function salvarUltimaLocalizacao(device) {
+    try {
+      await fetch(`${baseURL}api/coleira/${device.idColeira}/coords`, {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          latitude: device.latitude,
+          longitude: device.longitude
+        })
+      });
+
+      console.log("Última localização salva no banco");
+    } catch (err) {
+      console.error("Erro ao salvar última localização", err);
+    }
   }
-}
-async function simulate() {
-  if (simulationIntervalRef.current) return;
-  if (coleirasRef.current.length === 0) return;
+  async function simulate() {
+  if (simulationIntervalRef.current) {
+    showAlert("A simulação já está em andamento", "warning");
+    return;
+  }
+  
+  if (coleirasRef.current.length === 0) {
+    showAlert("Adicione uma coleira antes de simular.", "warning");
+    return;
+  }
+  showAlert("Simulação de 10 segundos iniciada!", "success");
 
   const startTime = Date.now();
-
+  
   simulationIntervalRef.current = setInterval(() => {
     const elapsed = Date.now() - startTime;
-
-    if (elapsed >= 30000) {
+        
+    if (elapsed >= 10000) {
       clearInterval(simulationIntervalRef.current);
       simulationIntervalRef.current = null;
-
+      
       coleirasRef.current.forEach(device => {
         salvarUltimaLocalizacao(device);
       });
 
-      console.log("🧪 Simulação encerrada e salva no banco");
+      showAlert("Simulação encerrada e dados salvos!", "info");
+      setShowForm(false)
+      setAlertInfo(false)
       return;
     }
 
@@ -71,191 +108,248 @@ async function simulate() {
   }, 1000);
 }
 
-  useEffect(() => {
-    async function init() {
+    useEffect(() => {
+      async function init() {
+      try {
+        const res = await fetch(`${baseURL}user/me`, {
+          credentials: "include"
+        });
+
+        if (!res.ok) {
+          window.location.href = "/user/login";
+          return;
+        }
+
+        const data = await res.json();
+        setUserID(data.user_ID);
+
+        await fetchColeiras(data.user_ID);
+
+      } catch (err) {
+        window.location.href = "/user/login";
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    init();
+
+    return () => {
+      if (simulationIntervalRef.current)
+        clearInterval(simulationIntervalRef.current);
+    };
+  }, []);
+
+    async function fetchColeiras(id) {
+      try {
+        const res = await fetch(
+          `${baseURL}api/coleiras/${id}`,
+          {
+            credentials: "include"
+          }
+        );
+
+        if (!res.ok) {
+          console.error("Erro ao buscar coleiras");
+          return;
+        }
+
+        const data = await res.json();
+        setColeiras(data);
+      } catch (error) {
+        console.error("Erro ao buscar coleiras:", error);
+      }
+    }
+
+    const handleFormSubmit = async (e) => {
+      e.preventDefault();
+      setErrorMessage("")
+
+      const coordenadasDoIF = {
+      'latitude': -22.948797944778388,
+      'longitude': -46.55866095924524
+      }
+
+      try {
+        const res = await fetch(
+          `${baseURL}api/coleira`,
+          {
+            method: "POST",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              nomeColeira: newDevice.name,
+              userID,
+              distanciaMaxima: Number(newDevice.maxDistance),
+              latitude: coordenadasDoIF['latitude'],
+              longitude: coordenadasDoIF['longitude']
+            })
+          }
+        );
+
+        if (!res.ok) {
+          const errorData = await res.json();
+          setErrorMessage(`${errorData.message}`)
+          return;
+        }
+
+        setShowForm(false);
+        setErrorMessage("")
+        setNewDevice({ name: "", maxDistance: "" });
+        await fetchColeiras(userID);
+
+      } catch (error) {
+        console.error("Erro ao criar coleira:", error);
+        setErrorMessage("Erro ao adicionar coleira.")
+      }
+    };
+
+    async function handleDeleteColeira(idColeira) {
+      try {
+        const res = await fetch(
+          `${baseURL}api/coleira/${idColeira}`,
+          {
+            method: "DELETE",
+            credentials: "include"
+          }
+        );
+
+        if (!res.ok) {
+          const err = await res.json();
+          setErrorMessage("Erro ao excluir coleira")
+          return;
+        }
+
+        setColeiras(prev =>
+          prev.filter(c => c.idColeira !== idColeira)
+        );
+
+      } catch (error) {
+        console.error("Erro ao deletar coleira:", error);
+        setErrorMessage("Erro ao excluir coleira.")
+      }
+    }
+    const handleFormSettingsSubmit = async (e) => {
+    e.preventDefault();
     try {
-      const res = await fetch(`${baseURL}user/me`, {
-        credentials: "include"
+      const res = await fetch(`${baseURL}api/coleira/${selectedDevice.idColeira}/settings`, {
+        method: "PUT",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nomeColeira: newDevice.name,
+          distanciaMaxima: Number(newDevice.maxDistance)
+        })
       });
 
-      if (!res.ok) {
-        window.location.href = "/user/login";
-        return;
-      }
+      if (!res.ok) throw new Error("Erro ao atualizar");
 
-      const data = await res.json();
-      setUserID(data.user_ID);
-
-      await fetchColeiras(data.user_ID);
-
-    } catch (err) {
-      window.location.href = "/user/login";
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  init();
-
-  return () => {
-    if (simulationIntervalRef.current)
-      clearInterval(simulationIntervalRef.current);
-  };
-}, []);
-
-  async function fetchColeiras(id) {
-    try {
-      const res = await fetch(
-        `${baseURL}api/coleiras/${id}`,
-        {
-          credentials: "include"
-        }
-      );
-
-      if (!res.ok) {
-        console.error("Erro ao buscar coleiras");
-        return;
-      }
-
-      const data = await res.json();
-      setColeiras(data);
+      setShowFormSettings(false);
+      fetchColeiras(userID);
     } catch (error) {
-      console.error("Erro ao buscar coleiras:", error);
-    }
-  }
-
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
-    setErrorMessage("")
-
-    const coordenadasDoIF = {
-    'latitude': -22.948797944778388,
-    'longitude': -46.55866095924524
-    }
-
-    try {
-      const res = await fetch(
-        `${baseURL}api/coleira`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            nomeColeira: newDevice.name,
-            userID,
-            distanciaMaxima: Number(newDevice.maxDistance),
-            latitude: coordenadasDoIF['latitude'],
-            longitude: coordenadasDoIF['longitude']
-          })
-        }
-      );
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        setErrorMessage(`${errorData.message}`)
-        return;
-      }
-
-      setShowForm(false);
-      setErrorMessage("")
-      setNewDevice({ name: "", maxDistance: "" });
-      await fetchColeiras(userID);
-
-    } catch (error) {
-      console.error("Erro ao criar coleira:", error);
-      setErrorMessage("Erro ao adicionar coleira.")
+      setErrorMessage("Erro ao editar coleira.");
     }
   };
 
-  async function handleDeleteColeira(idColeira) {
-    try {
-      const res = await fetch(
-        `${baseURL}api/coleira/${idColeira}`,
-        {
-          method: "DELETE",
-          credentials: "include"
-        }
+    if (loading) {
+      return (
+        <>
+          <HeaderDashBoard />
+          <main className={styles.dashboard}>
+            <p>Carregando...</p>
+            
+          </main>
+        </>
       );
-
-      if (!res.ok) {
-        const err = await res.json();
-        setErrorMessage("Erro ao excluir coleira")
-        return;
-      }
-
-      setColeiras(prev =>
-        prev.filter(c => c.idColeira !== idColeira)
-      );
-
-    } catch (error) {
-      console.error("Erro ao deletar coleira:", error);
-      setErrorMessage("Erro ao excluir coleira.")
     }
-  }
 
-  if (loading) {
     return (
       <>
         <HeaderDashBoard />
+
         <main className={styles.dashboard}>
-          <p>Carregando...</p>
+          {showForm && (
+            <form onSubmit={handleFormSubmit} className={styles.newDevice}>
+              <h2>Adicionar Nova Coleira</h2>
+
+              <input 
+                placeholder="Nome" 
+                value={newDevice.name} 
+                onChange={e => setNewDevice({ ...newDevice, name: e.target.value })} 
+                required
+              />
+              <input 
+                inputMode="numeric" 
+                placeholder="Distância Máxima em Metros (Raio)" 
+                value={newDevice.maxDistance} 
+                onChange={e => setNewDevice({ ...newDevice, maxDistance: e.target.value })} 
+                required 
+                min={1} 
+              />
+
+              {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
+
+              <div className={styles.formButtons}>
+                <button type="button" onClick={toggleForm}>Cancelar</button>
+                <button type="submit">Criar</button>
+              </div>
+            </form>
+          )}
+
+          {ShowFormSettings && (
+    <form onSubmit={handleFormSettingsSubmit} className={styles.newDevice}>
+      <h2>Editar Coleira</h2>
+
+      <input 
+        placeholder="Novo Nome" 
+        value={newDevice.name} 
+        onChange={e => setNewDevice({ ...newDevice, name: e.target.value })} 
+        required
+      />
+      <input 
+        inputMode="numeric" 
+        placeholder="Nova Distância Máxima" 
+        value={newDevice.maxDistance} 
+        onChange={e => setNewDevice({ ...newDevice, maxDistance: e.target.value })} 
+        required 
+      />
+
+      {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
+
+      <div className={styles.formButtons}>
+        <button type="button" onClick={toggleFormSettings}>Cancelar</button>
+        <button type="submit">Salvar Alterações</button>
+      </div>
+    </form>
+  )}
+
+          <div className={styles['coleiras-grid']}>
+            {coleiras.length === 0 ? (
+              <h1>Nenhuma coleira cadastrada. Adicione uma nova coleira!</h1>
+            ) : (
+              coleiras.map(device => (
+                <DashboardCard
+                  key={device.idColeira}
+                  device={device}
+                  onDelete={handleDeleteColeira}
+                  onSettingsForm={() => handleOpenSettings(device)}
+                />
+              ))
+            )}
+          </div>
+          <MenuColeira onAddCollar={toggleForm} onSimulate={simulate} ></MenuColeira>
           
+          {alertInfo.show && (
+          <Alert 
+            severity={alertInfo.severity} 
+            style={{ position: 'fixed', bottom: '1em', margin:'0 auto', zIndex: 9999 }}
+          >
+            {alertInfo.message}
+          </Alert>
+        )}
         </main>
       </>
     );
   }
-
-  return (
-    <>
-      <HeaderDashBoard />
-
-      <main className={styles.dashboard}>
-        {showForm && (
-          <form onSubmit={handleFormSubmit} className={styles.newDevice}>
-            <h2>Adicionar Nova Coleira</h2>
-
-            <input 
-              placeholder="Nome" 
-              value={newDevice.name} 
-              onChange={e => setNewDevice({ ...newDevice, name: e.target.value })} 
-              required
-            />
-            <input 
-              inputMode="numeric" 
-              placeholder="Distância Máxima em Metros (Raio)" 
-              value={newDevice.maxDistance} 
-              onChange={e => setNewDevice({ ...newDevice, maxDistance: e.target.value })} 
-              required 
-              min={1} 
-            />
-
-            {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
-
-            <div className={styles.formButtons}>
-              <button type="button" onClick={toggleForm}>Cancelar</button>
-              <button type="submit">Criar</button>
-            </div>
-          </form>
-        )}
-
-        <div className={styles['coleiras-grid']}>
-          {coleiras.length === 0 ? (
-            <h1>Nenhuma coleira cadastrada. Adicione uma nova coleira!</h1>
-          ) : (
-            coleiras.map(device => (
-              <DashboardCard
-                key={device.idColeira}
-                device={device}
-                onDelete={handleDeleteColeira}
-              />
-            ))
-          )}
-        </div>
-        
-        <MenuColeira onAddCollar={toggleForm} onSimulate={simulate} ></MenuColeira>
-      </main>
-    </>
-  );
-}
