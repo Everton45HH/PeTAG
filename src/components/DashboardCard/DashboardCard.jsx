@@ -3,14 +3,13 @@ import styles from '../../styles/dashboardCard.module.css';
 import haversine from 'haversine';
 import { useEffect, useState } from 'react';
 
-export default function DashboardCard({ device, onDelete }) {
+export default function DashboardCard({ device, onDelete , onSettingsForm }) {
   const [mapHtml, setMapHtml] = useState('');
   const [loading, setLoading] = useState(false);
   const baseURL = import.meta.env.VITE_API_URL;
   
-  // ✅ CORRIJA: Use coordenadas reais do IF ou local de referência
   const coordenadasDoIF = { 
-    latitude: -22.948797944778388, // Exemplo: São Paulo
+    latitude: -22.948797944778388,
     longitude: -46.55866095924524 
   };
 
@@ -27,7 +26,7 @@ export default function DashboardCard({ device, onDelete }) {
     const percentage = (current / max) * 100;
     
     if (percentage < 50) return styles['distance-green'];
-    if (percentage < 80) return styles['distance-yellow'];
+    if (percentage > 51 && percentage < 99) return styles['distance-yellow'];
     return styles['distance-red'];
   };
 
@@ -98,7 +97,7 @@ export default function DashboardCard({ device, onDelete }) {
         <div className={styles['device-actions']}>
           <button
             className={styles['device-settings-button']}
-            onClick={() => console.log('Settings clicked', device.idColeira)}
+            onClick={onSettingsForm}
             aria-label="Configurações"
           >
             <Settings size={20} />

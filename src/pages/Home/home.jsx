@@ -107,7 +107,7 @@ export default function Home() {
         </section>
       </main>
 
-      <ScrollToTop smooth top={window.innerHeight} color="#0997FE"/>
+      <ScrollToTop smooth top={window.innerHeight} color="#0997FE" />
       
       <footer className={styles.footer}>
         <p>&copy; 2025 PeTAG. Todos os direitos reservados.</p>

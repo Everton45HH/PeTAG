@@ -201,7 +201,6 @@ def updateCoords(id_coleira):
     except (ValueError, TypeError):
         return jsonify({'message': "Coordenadas inválidas"}), 400
 
-
     response, erro = update_device_coords(id_coleira, data, int(user_id))
     
     if erro:
@@ -218,8 +217,6 @@ def mapa_coleira(id_coleira):
     latitude = data.get("latitude")
     longitude = data.get("longitude")
     distancia_maxima = data.get("distanciaMaxima", 100)
-
-
 
     if latitude is None or longitude is None:
         return jsonify({'message': 'Coordenadas são obrigatórias'}), 400
@@ -250,7 +247,8 @@ def mapa_coleira(id_coleira):
         location=[latitude, longitude],
         zoom_start=18.4,
         control_scale=False,
-        height="100%"
+        height="100%",
+        zoom_control=False
     )
 
     folium.TileLayer(
