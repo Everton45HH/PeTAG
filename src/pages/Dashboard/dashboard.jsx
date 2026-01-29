@@ -77,14 +77,14 @@
     showAlert("Adicione uma coleira antes de simular.", "warning");
     return;
   }
-  showAlert("Simulação de 10 segundos iniciada!", "success");
+  showAlert("Simulação de 20 segundos iniciada!", "success");
 
   const startTime = Date.now();
   
   simulationIntervalRef.current = setInterval(() => {
     const elapsed = Date.now() - startTime;
         
-    if (elapsed >= 10000) {
+    if (elapsed >= 20000) {
       clearInterval(simulationIntervalRef.current);
       simulationIntervalRef.current = null;
       
