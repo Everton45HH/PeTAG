@@ -5,6 +5,7 @@ from utils.error_messages import ERROR as ERRO
 from flask import Blueprint, request, Response
 import folium
 import random
+import math
 
 coleira_bp = Blueprint('coleiras', __name__, url_prefix='')
 
@@ -36,8 +37,10 @@ def create():
     
     try:
         distancia = float(info.get('distanciaMaxima', 0))
-        if distancia <= 0:
-            return jsonify({'message': "A distância máxima deve ser maior que zero"}), 400
+        distancia = math.ceil(distancia)
+        if distancia <= 1:
+            return jsonify({'message': "A distância máxima deve ser maior que 1"}), 400
+        info['distanciaMaxima'] = math.ceil(distancia)
     except (ValueError, TypeError):
         return jsonify({'message': "Distância máxima inválida"}), 400
 
