@@ -65,6 +65,12 @@ export default function Home() {
           </div>
         </section>
 
+        <section id='tecnologias'>
+
+          
+
+        </section>
+
         <section id="quem-somos" className={styles.about}>
 
             <h2>QUEM SOMOS NÓS?</h2>
