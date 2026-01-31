@@ -8,7 +8,6 @@ export default function Register() {
   const navigate = useNavigate();
 
   const [nome, setNome] = useState("");
-  const [telefone, setTelefone] = useState(0);
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -29,7 +28,7 @@ export default function Register() {
       const response = await fetch(`${baseURL}user/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nome, telefone, email, senha }),
+        body: JSON.stringify({ nome, email, senha }),
         credentials: "include"
       });
 

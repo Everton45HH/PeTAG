@@ -39,12 +39,10 @@ export default function Login() {
             navigate("/user/dashboard")
         }
         else {
-        console.log(data.message);    
         setErrorMessage(data.message)
     }
     
     }catch (error) {
-    console.log(error);
     setErrorMessage("Erro ao conectar com o servidor");
     }
     };

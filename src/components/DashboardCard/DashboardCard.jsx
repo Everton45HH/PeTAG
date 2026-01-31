@@ -44,17 +44,17 @@ export default function DashboardCard({ device, onDelete , onSettingsForm }) {
     (parseFloat(distance) / parseFloat(device.distanciaMaxima)) * 100, 
     100
   );
-
   useEffect(() => {
     setLoading(true);
-    fetch(`${baseURL}api/coleira/mapa/${device.idColeira}`, {
+    fetch(`${baseURL}api/coleira/mapa`, {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         latitude: device.latitude,
         longitude: device.longitude,
-        distanciaMaxima: device.distanciaMaxima
+        distanciaMaxima: device.distanciaMaxima,
+        idColeira : device.idColeira,
       })
     })
       .then(res => {
@@ -93,6 +93,8 @@ export default function DashboardCard({ device, onDelete , onSettingsForm }) {
             Coleira #{device.idColeira}
           </p>
         </div>
+
+        
         
         <div className={styles['device-actions']}>
           <button

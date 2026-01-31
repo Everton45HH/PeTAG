@@ -8,7 +8,6 @@ class Schema(Database):
                 CREATE TABLE IF NOT EXISTS Usuario (
                     userID SERIAL PRIMARY KEY,
                     nome TEXT NOT NULL,
-                    telefone TEXT,
                     email TEXT UNIQUE NOT NULL,
                     senha TEXT NOT NULL
                 );

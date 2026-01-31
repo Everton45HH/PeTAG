@@ -34,12 +34,12 @@ export default function Dashboard() {
     setNewDevice({ name: '', maxDistance: '' });
     setShowForm(prev => !prev);
   };
-
+  
   const handleOpenSettings = (device) => {
     setErrorMessage('');
     setSelectedDevice(device);
     setNewDevice({ name: device.nomeColeira, maxDistance: device.distanciaMaxima });
-    setShowFormSettings(true);
+    setShowFormSettings(prev => !prev);
   };
 
   const toggleFormSettings = () => {
@@ -55,23 +55,24 @@ export default function Dashboard() {
 
   async function salvarUltimaLocalizacao(device) {
     try {
-      const res = await fetch(`${baseURL}api/coleira/${device.idColeira}/coords`, {
+      const res = await fetch(`${baseURL}api/coleira/coords`, {
         method: "PUT",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           latitude: device.latitude,
-          longitude: device.longitude
+          longitude: device.longitude,
+          idColeira: device.idColeira
         })
       });
 
       if (res.ok) {
-        console.log(`✅ Posição da coleira ${device.idColeira} salva`);
+        console.log(`Posição da coleira ${device.idColeira} salva`);
       } else {
-        console.error(`❌ Erro ao salvar coleira ${device.idColeira}`);
+        console.error(`Erro ao salvar coleira ${device.idColeira}`);
       }
     } catch (err) {
-      console.error("❌ Erro ao salvar última localização:", err);
+      console.error("Erro ao salvar última localização:", err);
     }
   }
 
@@ -129,7 +130,7 @@ export default function Dashboard() {
         }
 
         const data = await res.json();
-        const userId = data.userID || data.user_ID;
+        const userId = data.userID;
         
         if (!userId) {
           showAlert("Erro ao carregar dados do usuário", "error");
@@ -158,9 +159,9 @@ export default function Dashboard() {
     };
   }, [baseURL, navigate]);
 
-  async function fetchColeiras(id) {
+  async function fetchColeiras() {
     try {
-      const res = await fetch(`${baseURL}api/coleiras/${id}`, {
+      const res = await fetch(`${baseURL}api/coleiras`, {
         method: "GET",
         credentials: "include"
       });
@@ -177,14 +178,9 @@ export default function Dashboard() {
     }
   }
 
-  const handleFormSubmit = async (e) => {
+  const createNewColeira = async (e) => {
     e.preventDefault();
     setErrorMessage("");
-
-    const coordenadasDoIF = {
-      latitude: -22.948797944778388,
-      longitude: -46.55866095924524
-    };
 
     try {
       const res = await fetch(`${baseURL}api/coleira`, {
@@ -193,10 +189,8 @@ export default function Dashboard() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           nomeColeira: newDevice.name.trim(),
-          userID,
-          distanciaMaxima: Number(newDevice.maxDistance),
-          latitude: coordenadasDoIF.latitude,
-          longitude: coordenadasDoIF.longitude
+          userID:userID,
+          distanciaMaxima: Number(newDevice.maxDistance)
         })
       });
 
@@ -210,7 +204,7 @@ export default function Dashboard() {
       setShowForm(false);
       setErrorMessage("");
       setNewDevice({ name: "", maxDistance: "" });
-      await fetchColeiras(userID);
+      await fetchColeiras();
 
     } catch (error) {
       console.error("Erro ao criar coleira:", error);
@@ -247,11 +241,12 @@ export default function Dashboard() {
     setErrorMessage("");
 
     try {
-      const res = await fetch(`${baseURL}api/coleira/${selectedDevice.idColeira}/settings`, {
+      const res = await fetch(`${baseURL}api/coleira/settings`, {
         method: "PUT",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          idColeira: selectedDevice.idColeira,
           nomeColeira: newDevice.name.trim(),
           distanciaMaxima: Number(newDevice.maxDistance)
         })
@@ -267,10 +262,9 @@ export default function Dashboard() {
       setShowFormSettings(false);
       setSelectedDevice(null);
       setNewDevice({ name: "", maxDistance: "" });
-      await fetchColeiras(userID);
+      await fetchColeiras();
 
     } catch (error) {
-      console.error("Erro ao editar coleira:", error);
       setErrorMessage("Erro ao editar coleira");
     }
   };
@@ -294,7 +288,7 @@ export default function Dashboard() {
 
       <main className={styles.dashboard}>
         {showForm && (
-          <form onSubmit={handleFormSubmit} className={styles.newDevice}>
+          <form onSubmit={createNewColeira} className={styles.newDevice}>
             <h2>Adicionar Nova Coleira</h2>
 
             <input 
