@@ -1,4 +1,4 @@
-# Projeto Integrado – Curso de Informática
+# [PeTAG - Pet tracking & GPS](https://petag-project.vercel.app/)
 
 ## Descrição
 O projeto consiste no desenvolvimento de uma aplicação web para o rastreio e monitoramento de animais de estimação por meio de uma coleira inteligente.  
