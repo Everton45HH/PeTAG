@@ -1,8 +1,11 @@
-import styles from '../../styles/register.module.css';
-import dog from '../../assets/images/cao2.webp';
-import logo from '../../assets/images/Logo.png';
+import styles from "../../styles/register.module.css";
+import dog from "../../assets/images/cao2.webp";
+import logo from "../../assets/images/Logo.png";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+
+const baseURL = import.meta.env.VITE_API_URL;
+const DEFAULT_ERROR = "Erro interno do servidor.";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -13,11 +16,6 @@ export default function Register() {
   const [errorMessage, setErrorMessage] = useState("");
   const [senhaVisivel, setSenhaVisivel] = useState(false);
   const [loading, setLoading] = useState(false);
-  const baseURL = import.meta.env.VITE_API_URL;
-
-  const toggleSenhaVisivel = () => {
-    setSenhaVisivel(!senhaVisivel);
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,26 +23,22 @@ export default function Register() {
     setErrorMessage("");
 
     try {
-      const response = await fetch(`${baseURL}user/register`, {
+      const response = await fetch(`${baseURL}usuarios/cadastro`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nome, email, senha }),
-        credentials: "include"
+        body: JSON.stringify({ nome: nome.trim(), email: email.trim(), senha }),
       });
 
-      const data = await response.json();
-
       if (response.ok) {
-        setErrorMessage("");
         navigate("/user/login");
-      } else {
-        console.error("Erro ao registrar:", data.message);
-        setErrorMessage(data.message || "Erro ao criar conta");
+        return;
       }
 
+      const data = await response.json().catch(() => ({}));
+      setErrorMessage(data.error?.message || DEFAULT_ERROR);
     } catch (error) {
-      console.error("Erro na requisição:", error);
-      setErrorMessage("Erro ao conectar com o servidor. Tente novamente.");
+      console.error("Erro ao registrar:", error);
+      setErrorMessage(DEFAULT_ERROR);
     } finally {
       setLoading(false);
     }
@@ -61,64 +55,72 @@ export default function Register() {
 
         <form className={styles.login_box} onSubmit={handleSubmit}>
           <label htmlFor="nome">Nome</label>
-          <input 
-            type="text" 
-            required 
-            placeholder="Digite seu Nome" 
-            name="nome" 
+          <input
+            id="nome"
+            name="nome"
+            type="text"
+            required
+            placeholder="Digite seu Nome"
             value={nome}
-            onChange={(e) => setNome(e.target.value)} 
+            onChange={(e) => setNome(e.target.value)}
           />
 
           <label htmlFor="email">Email</label>
-          <input 
-            type="email" 
-            required 
-            placeholder="Digite seu Email" 
-            name="email" 
+          <input
+            id="email"
+            name="email"
+            type="email"
+            required
+            placeholder="Digite seu Email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)} 
+            onChange={(e) => setEmail(e.target.value)}
           />
 
-          <label htmlFor="senha" className={styles.label}>Senha</label>
+          <label htmlFor="senha" className={styles.label}>
+            Senha
+          </label>
 
           <div className={styles.senha_box}>
-            <input 
-              type={senhaVisivel ? "text" : "password"} 
-              placeholder="Digite sua Senha" 
-              required 
-              value={senha} 
-              onChange={(e) => setSenha(e.target.value)} 
-              className={styles.input} 
+            <input
+              id="senha"
+              name="senha"
+              type={senhaVisivel ? "text" : "password"}
+              placeholder="Digite sua Senha"
+              required
+              minLength={8}
+              maxLength={72}
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+              className={styles.input}
             />
 
-            <button 
-              type="button" 
-              onClick={toggleSenhaVisivel} 
-              className={styles.button_eye} 
+            <button
+              type="button"
+              onClick={() => setSenhaVisivel((v) => !v)}
+              className={styles.button_eye}
               aria-label={senhaVisivel ? "Ocultar senha" : "Mostrar senha"}
             >
-              {senhaVisivel ? (
-                <i className="fa-solid fa-eye"></i>
-              ) : (
-                <i className="fa-solid fa-eye-slash"></i>
-              )}
+              <i
+                className={
+                  senhaVisivel ? "fa-solid fa-eye" : "fa-solid fa-eye-slash"
+                }
+              ></i>
             </button>
           </div>
 
           <p className={styles.ou}>Ou crie uma conta de outra forma</p>
 
           <div className={styles.social_login}>
-            <i 
-              className="fa-brands fa-google" 
+            <i
+              className="fa-brands fa-google"
               onClick={() => alert("Botões apenas para ilustração")}
             />
-            <i 
-              className="fa-brands fa-facebook" 
+            <i
+              className="fa-brands fa-facebook"
               onClick={() => alert("Botões apenas para ilustração")}
             />
-            <i 
-              className="fa-brands fa-microsoft" 
+            <i
+              className="fa-brands fa-microsoft"
               onClick={() => alert("Botões apenas para ilustração")}
             />
           </div>
@@ -135,7 +137,7 @@ export default function Register() {
               border: "none",
               borderRadius: "6px",
               cursor: loading ? "not-allowed" : "pointer",
-              padding: "10px"
+              padding: "10px",
             }}
           />
 

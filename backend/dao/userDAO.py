@@ -1,54 +1,50 @@
 from .connection import Database
+from psycopg2.errors import UniqueViolation
+from utils.error_messages import AppError
 from psycopg2.extras import RealDictRow
+
 
 class UserDAO(Database):
 
-    def _execute(self, query, params=(), fetchone=False, fetchall=False):
+    def _execute(self, query, params=None, fetchone=False):
         conn, cursor = self.get_connection()
         try:
             cursor.execute(query, params)
-
-            if fetchone:
-                result = cursor.fetchone()
-            elif fetchall:
-                result = cursor.fetchall()
-            else:
-                result = None
-
+            result = cursor.fetchone() if fetchone else None
             conn.commit()
-            return result, None
-
-        except Exception as e:
+            return result
+        except Exception:
             conn.rollback()
-            # Retornamos a string do erro para o Flask conseguir serializar em JSON
-            return None, str(e)
-
+            raise
         finally:
             cursor.close()
             conn.close()
 
     def create(self, user):
         query = """
-            INSERT INTO "Usuario" ("nome", "email", "senha")
+            INSERT INTO usuarios (nome, email, senha)
             VALUES (%s, %s, %s)
-            RETURNING "userID" AS "userID"
+            RETURNING id
         """
-        return self._execute(
-            query,
-            (user["nome"], user["email"], user["senha"]),
-            fetchone=True
-        )
+        try:
+            return self._execute(
+                query,
+                (user["nome"], user["email"], user["senha"]),
+                fetchone=True,
+            )
+        except UniqueViolation:
+            raise AppError("EMAIL_EXISTS")
 
     def get_by_email(self, email):
         query = """
-            SELECT "userID" AS "userID", "email", "senha" 
-            FROM "Usuario" 
+            SELECT id, email, senha
+            FROM usuarios 
             WHERE "email" = %s
         """
         return self._execute(query, (email,), fetchone=True)
 
     def user_exists(self, user_id):
-        query = """SELECT 1 FROM "Usuario" WHERE "userID" = %s"""
+        query = """SELECT 1 FROM usuarios WHERE id" = %s"""
         return self._execute(query, (user_id,), fetchone=True)
 
     def update(self, user_id, data):
@@ -56,17 +52,17 @@ class UserDAO(Database):
         values = list(data.values()) + [user_id]
 
         query = f"""
-            UPDATE "Usuario"
+            UPDATE usuarios
             SET {fields}
-            WHERE "userID" = %s
-            RETURNING "userID" AS "userID"
+            WHERE id = %s
         """
         return self._execute(query, values, fetchone=True)
 
     def delete(self, user_id):
+        print(user_id)
         query = """
-            DELETE FROM "Usuario"
-            WHERE "userID" = %s
-            RETURNING "userID" AS "userID"
+            DELETE FROM usuarios
+            WHERE id = %s
+            RETURNING id
         """
         return self._execute(query, (user_id,), fetchone=True)

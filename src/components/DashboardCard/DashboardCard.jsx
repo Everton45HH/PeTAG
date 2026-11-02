@@ -1,112 +1,119 @@
-import { Settings, Trash2 } from 'lucide-react';
-import styles from '../../styles/dashboardCard.module.css';
-import haversine from 'haversine';
-import { useEffect, useState } from 'react';
+import { Settings, Trash2 } from "lucide-react";
+import styles from "../../styles/dashboardCard.module.css";
+import haversine from "haversine";
+import { useEffect, useState } from "react";
 
-export default function DashboardCard({ device, onDelete , onSettingsForm }) {
-  const [mapHtml, setMapHtml] = useState('');
+export default function DashboardCard({ device, onDelete, onSettingsForm }) {
+  const [mapHtml, setMapHtml] = useState("");
   const [loading, setLoading] = useState(false);
   const baseURL = import.meta.env.VITE_API_URL;
-  
-  const coordenadasDoIF = { 
+
+  const coordenadasDoIF = {
     latitude: -22.948797944778388,
-    longitude: -46.55866095924524 
+    longitude: -46.55866095924524,
   };
 
-  const coordenadasColeira = { 
-    latitude: device.latitude, 
-    longitude: device.longitude 
+  const coordenadasColeira = {
+    latitude: device.latitude,
+    longitude: device.longitude,
   };
-  
-  const distance = (haversine(coordenadasDoIF, coordenadasColeira) * 1000).toFixed(2);
-    
+
+  const distance = (
+    haversine(coordenadasDoIF, coordenadasColeira) * 1000
+  ).toFixed(2);
+
   const getDistanceColor = () => {
     const current = parseFloat(distance);
     const max = parseFloat(device.distanciaMaxima);
     const percentage = (current / max) * 100;
-    
-    if (percentage < 50) return styles['distance-green'];
-    if (percentage > 51 && percentage < 99) return styles['distance-yellow'];
-    return styles['distance-red'];
+
+    if (percentage < 50) return styles["distance-green"];
+    if (percentage > 51 && percentage < 99) return styles["distance-yellow"];
+    return styles["distance-red"];
   };
 
   const getProgressColor = () => {
     const current = parseFloat(distance);
     const max = parseFloat(device.distanciaMaxima);
     const percentage = (current / max) * 100;
-    
-    if (percentage < 50) return styles['progress-green'];
-    if (percentage > 51 && percentage < 99) return styles['progress-yellow'];
-    return styles['progress-red'];
+
+    if (percentage < 50) return styles["progress-green"];
+    if (percentage > 51 && percentage < 99) return styles["progress-yellow"];
+    return styles["progress-red"];
   };
 
   const progressWidth = Math.min(
-    (parseFloat(distance) / parseFloat(device.distanciaMaxima)) * 100, 
-    100
+    (parseFloat(distance) / parseFloat(device.distanciaMaxima)) * 100,
+    100,
   );
   useEffect(() => {
     setLoading(true);
-    fetch(`${baseURL}api/coleira/mapa`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
+    fetch(`${baseURL}coleiras/mapa`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         latitude: device.latitude,
         longitude: device.longitude,
         distanciaMaxima: device.distanciaMaxima,
-        idColeira : device.idColeira,
-      })
+        idColeira: device.idColeira,
+      }),
     })
-      .then(res => {
-        if (!res.ok) throw new Error('Erro ao carregar mapa');
+      .then((res) => {
+        if (!res.ok) throw new Error("Erro ao carregar mapa");
         return res.text();
       })
-      .then(html => {
+      .then((html) => {
         setMapHtml(html);
         setLoading(false);
       })
-      .catch(err => {
-        console.error('Erro ao carregar mapa:', err);
-        setMapHtml('<div style="display:flex;align-items:center;justify-content:center;height:100%;background:#ffebee;color:#c62828;">Erro ao carregar mapa</div>');
+      .catch((err) => {
+        console.error("Erro ao carregar mapa:", err);
+        setMapHtml(
+          '<div style="display:flex;align-items:center;justify-content:center;height:100%;background:#ffebee;color:#c62828;">Erro ao carregar mapa</div>',
+        );
         setLoading(false);
       });
-  }, [device.latitude, device.longitude, device.idColeira, device.distanciaMaxima, baseURL]);
+  }, [
+    device.latitude,
+    device.longitude,
+    device.idColeira,
+    device.distanciaMaxima,
+    baseURL,
+  ]);
 
   return (
-    <div className={styles['device-card']}>
+    <div className={styles["device-card"]}>
       <div
         style={{
-          height: '220px',
-          borderRadius: '8px',
-          overflow: 'hidden',
-          position: 'relative'
+          height: "220px",
+          borderRadius: "8px",
+          overflow: "hidden",
+          position: "relative",
         }}
       >
-        
-        <div dangerouslySetInnerHTML={{ __html: mapHtml }}/>
+        <div dangerouslySetInnerHTML={{ __html: mapHtml }} />
       </div>
 
-      <div className={styles['device-card-header']}>
-        <div className={styles['device-info']}>
-          <h3>{device.nomeColeira}</h3> 
-          <p className={styles['device-type-badge']}>
+      <div className={styles["device-card-header"]}>
+        <div className={styles["device-info"]}>
+          <h3>{device.nomeColeira}</h3>
+          <p className={styles["device-type-badge"]}>
             Coleira #{device.idColeira}
           </p>
         </div>
 
-        
-        
-        <div className={styles['device-actions']}>
+        <div className={styles["device-actions"]}>
           <button
-            className={styles['device-settings-button']}
+            className={styles["device-settings-button"]}
             onClick={onSettingsForm}
             aria-label="Configurações"
           >
             <Settings size={20} />
           </button>
-          
+
           <button
-            className={styles['device-delete-button']}
+            className={styles["device-delete-button"]}
             onClick={() => onDelete(device.idColeira)}
             aria-label="Deletar"
           >
@@ -114,17 +121,17 @@ export default function DashboardCard({ device, onDelete , onSettingsForm }) {
           </button>
         </div>
       </div>
-      
-      <div className={styles['device-distance-info']}>
-        <div className={styles['distance-row']}>
-          <span className={styles['distance-label']}>Distância</span>
+
+      <div className={styles["device-distance-info"]}>
+        <div className={styles["distance-row"]}>
+          <span className={styles["distance-label"]}>Distância</span>
           <span className={getDistanceColor()}>
             {distance}m / {device.distanciaMaxima}m
           </span>
         </div>
-        <div className={styles['progress-bar-container']}>
+        <div className={styles["progress-bar-container"]}>
           <div
-            className={`${styles['progress-bar']} ${getProgressColor()}`}
+            className={`${styles["progress-bar"]} ${getProgressColor()}`}
             style={{ width: `${progressWidth}%` }}
           ></div>
         </div>

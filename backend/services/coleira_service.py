@@ -1,146 +1,148 @@
-from dao.coleiraDAO import ColeiraDAO
 import math
+import folium
+from dao.coleiraDAO import ColeiraDAO
+from utils.error_messages import AppError
+from DEFAULT_CONFIGS.default_configs import MAX_COLLARS, CENTER_COORDINATES
 
 daoService = ColeiraDAO()
 
-MAX_COLEIRAS = 7
 
-def create_coleira(info, user_id):
-    if not info:
-        return None, "Requisição Inválida"
-
-    nome = str(info.get('nomeColeira', '')).strip()
-    if not nome:
-        return None, "Nome Inválido"
-
-    coleiras, erro = daoService.get_all_coleiras_by_user(user_id)
-    if erro:
-        return None, "Erro ao verificar coleiras do usuário"
-
-    if coleiras and len(coleiras) >= MAX_COLEIRAS:
-        return None, "Limite de coleiras atingido"
-
+# Funções auxiliares
+def _parse_distancia(valor):
     try:
-        distancia = float(info.get('distanciaMaxima', 0))
-        distancia = math.ceil(distancia)
+        distancia = math.ceil(float(valor))
+    except (ValueError, TypeError, OverflowError):
+        raise AppError("INVALID_DISTANCE")
 
-        if distancia < 1:
-            return None, "Distancia Invalida"
+    if distancia < 1:
+        raise AppError("INVALID_DISTANCE")
 
-        info['distanciaMaxima'] = distancia
-    except (ValueError, TypeError):
-        return None, "Distancia Invalida"
-
-    info['userid'] = user_id
-
-    coordenadas_if = {
-        'latitude': -22.948797944778388,
-        'longitude': -46.55866095924524
-    }
-
-    info.setdefault('latitude', coordenadas_if['latitude'])
-    info.setdefault('longitude', coordenadas_if['longitude'])
-
-    response, erro = daoService.create(info)
-    if erro:
-        return None, "Erro ao criar coleira"
-
-    return response, None
+    return distancia
 
 
-def get_all_coleiras(user_id):
-    response, error = daoService.get_all_coleiras_by_user(user_id)
-
-    if error:
-        return None, error
-
-    return response, None
-
-
-def delete_coleira(id_coleira):
-    response, error = daoService.delete(id_coleira)
-
-    if error:
-        return None, error
-
-    if not response:
-        return None, "Coleira não encontrada"
-
-    return "Coleira removida com sucesso", None
-
-
-def get_coleira(id):
-    response, error = daoService.get_by_id(id)
-    
-    if error:
-        return None, error
-    
-    return response, None
-
-
-def update_coleira_settings(data, user_id):
-
-    id_coleira = data.get('idColeira')
-
-    print(data , user_id)
-
-    if not data:
-        return None, "Requisição inválida"
-
-    if 'nomeColeira' in data:
-        nome = str(data.get('nomeColeira', '')).strip()
-        if not nome:
-            return None, "O nome da coleira não pode estar vazio"
-        data['nomeColeira'] = nome
-
-    if 'distanciaMaxima' in data:
-        try:
-            distancia = float(data.get('distanciaMaxima'))
-            if distancia < 1:
-                return None, "A distância máxima deve ser pelo menos 1 metro"
-            data['distanciaMaxima'] = math.ceil(distancia)
-        except (ValueError, TypeError):
-            return None, "Distância máxima inválida"
-
-    response, error = daoService.update_settings(id_coleira, data, user_id)
-
-    if error:
-        return None, "Erro ao atualizar coleira"
-
-    if not response:
-        return None, "Coleira não encontrada"
-
-    return "Coleira atualizada com sucesso", None
-
-
-def update_coleira_coords(data):
-    if not data:
-        return None, "Requisição inválida"
-        
-    latitude = data.get('latitude')
-    longitude = data.get('longitude')
-    idColeira = data.get('idColeira')    
-    if latitude is None or longitude is None:
-        return None, "Latitude e longitude são obrigatórias"
-    
+def _parse_coordenadas(latitude, longitude):
     try:
         latitude = float(latitude)
         longitude = float(longitude)
-        
-        if not (-90 <= latitude <= 90):
-            return None, "Latitude deve estar entre -90 e 90"
-        if not (-180 <= longitude <= 180):
-            return None, "Longitude deve estar entre -180 e 180"
-            
     except (ValueError, TypeError):
-        return None, "Coordenadas inválidas"
+        raise AppError("INVALID_COORDINATES")
 
-    response, error = daoService.update_coords(data ,idColeira )
-    
-    if error:
-        return None, "Erro ao atualizar coordenadas"
-    
-    if not response:
-        return None, "Coleira não encontrada"
-    
-    return "Coordenadas atualizadas com sucesso", None
+    if not (-90 <= latitude <= 90 and -180 <= longitude <= 180):
+        raise AppError("INVALID_COORDINATES")
+
+    return latitude, longitude
+
+
+# Funções de rota-service
+
+
+def create_coleira(info, user_id):
+    for campo in ("nomeColeira", "distanciaMaxima"):
+        if not str(info.get(campo) or "").strip():
+            raise AppError("MISSING_FIELDS")
+
+    nome = str(info["nomeColeira"]).strip()
+    distancia = _parse_distancia(info["distanciaMaxima"])
+
+    latitude, longitude = _parse_coordenadas(
+        info.get("latitude", CENTER_COORDINATES["latitude"]),
+        info.get("longitude", CENTER_COORDINATES["longitude"]),
+    )
+
+    if len(get_all_coleiras(user_id)) >= MAX_COLLARS:
+        raise AppError("LIMIT_REACHED")
+
+    return daoService.create(
+        {
+            "nomeColeira": nome,
+            "distanciaMaxima": distancia,
+            "userID": user_id,
+            "latitude": latitude,
+            "longitude": longitude,
+        }
+    )
+
+
+def get_all_coleiras(user_id):
+    return daoService.get_all_coleiras_by_user(user_id)
+
+
+def get_coleira(id_coleira, user_id):
+    return daoService.get_by_id(id_coleira)
+
+
+def delete_coleira(id_coleira, user_id):
+    daoService.delete(id_coleira, user_id)
+
+
+def update_coleira_settings(info, user_id):
+    for campo in ("idColeira", "nomeColeira"):
+        if not str(info.get(campo) or "").strip():
+            raise AppError("MISSING_FIELDS")
+
+    if not (get_coleira(info["idColeira"],user_id)):
+        raise AppError("COLLAR_NOT_FOUND")
+
+    return daoService.update_settings(
+        info["idColeira"],
+        user_id,
+        {
+            "nomeColeira": info["nomeColeira"],
+            "distanciaMaxima": _parse_distancia(info.get("distanciaMaxima")),
+        },
+    )
+
+
+def update_coleira_coords(info):
+
+    for campo in ("idColeira", "latitude", "longitude"):
+        if not info.get(campo):
+            raise AppError("MISSING_FIELDS")
+
+    id_coleira = info.get("idColeira")
+    latitude, longitude = _parse_coordenadas(info["latitude"], info["longitude"])
+
+    daoService.update_coords(
+        id_coleira,
+        {"latitude": latitude, "longitude": longitude},
+    )
+
+
+def generate_map(info, user_id):
+    id_coleira = info.get("idColeira")
+
+    if not id_coleira or info.get("latitude") is None or info.get("longitude") is None:
+        raise AppError("MISSING_FIELDS")
+
+    latitude, longitude = _parse_coordenadas(info["latitude"], info["longitude"])
+    coleira = get_coleira(id_coleira, user_id)
+
+    mapa = folium.Map(
+        location=[latitude, longitude],
+        zoom_start=18,
+        control_scale=False,
+        height="100%",
+    )
+
+    folium.TileLayer(
+        tiles="https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
+        attr="Google",
+        name="Google Satellite",
+        subdomains=["mt0", "mt1", "mt2", "mt3"],
+    ).add_to(mapa)
+
+    folium.Marker(
+        [latitude, longitude],
+        popup=coleira["nomeColeira"],
+        icon=folium.Icon(color="red", icon="paw", prefix="fa"),
+    ).add_to(mapa)
+
+    folium.Circle(
+        location=[CENTER_COORDINATES["latitude"], CENTER_COORDINATES["longitude"]],
+        radius=coleira["distanciaMaxima"],
+        color="red",
+        fill=True,
+        fill_opacity=0.15,
+    ).add_to(mapa)
+
+    return mapa._repr_html_()

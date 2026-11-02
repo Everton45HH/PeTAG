@@ -3,7 +3,7 @@ import styles from '../../styles/dashboard.module.css';
 
 //Props ativos: onAddCentralDevice, onAddCollar
 
-export default function ActionButtons({ onAddCollar }) {
+export default function ActionButttons({ onAddCollar }) {
   return (
     <div className={styles['action-buttons']}>
       <div className={styles['action-button-container']}>

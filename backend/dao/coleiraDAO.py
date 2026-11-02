@@ -1,104 +1,112 @@
 from dao.connection import Database
-from psycopg2.extras import RealDictRow
+from psycopg2.errors import UniqueViolation
+from utils.error_messages import AppError
 
 class ColeiraDAO(Database):
 
-    def _execute(self, query, params=(), fetchone=False, fetchall=False):
+    def _execute(self, query, params=None, fetchone=False, fetchall=False):
         conn, cursor = self.get_connection()
         try:
             cursor.execute(query, params)
-
+            result = None
             if fetchone:
                 result = cursor.fetchone()
             elif fetchall:
                 result = cursor.fetchall()
-            else:
-                result = None
-
             conn.commit()
-            return result, None
-
-        except Exception as e:
+            return result
+        except Exception:
             conn.rollback()
-            return None, str(e)
-
+            raise
         finally:
             cursor.close()
             conn.close()
 
     def create(self, data):
         query = """
-            INSERT INTO "Coleira" ("nomeColeira", "userID", "longitude", "latitude", "distanciaMaxima")
+            INSERT INTO coleiras (nome, usuario_id, longitude, latitude, distancia_maxima)
             VALUES (%s, %s, %s, %s, %s)
-            RETURNING "idColeira" AS "idColeira"
+            RETURNING id AS "idColeira"
         """
-        return self._execute(
+        try:
+            return self._execute(
             query,
             (
                 data["nomeColeira"],
                 data["userID"],
                 data["longitude"],
                 data["latitude"],
-                data["distanciaMaxima"]
+                data["distanciaMaxima"],
             ),
-            fetchone=True
+            fetchone=True,
         )
+        except UniqueViolation:
+                raise AppError("COLLAR_EXISTS")
 
     def get_by_id(self, id_coleira):
         query = """
-            SELECT "idColeira" AS "idColeira", "userID" AS "userID", "nomeColeira" AS "nomeColeira", 
-                   "longitude", "latitude", "distanciaMaxima" AS "distanciaMaxima"
-            FROM "Coleira"
-            WHERE "idColeira" = %s
+            SELECT id AS "idColeira",
+                usuario_id AS "userID",
+                nome AS "nomeColeira",
+                longitude,
+                latitude,
+                distancia_maxima AS "distanciaMaxima"
+            FROM coleiras
+            WHERE id = %s
         """
         return self._execute(query, (id_coleira,), fetchone=True)
 
     def get_all_coleiras_by_user(self, user_id):
         query = """
-            SELECT "idColeira" AS "idColeira", "userID" AS "userID", "nomeColeira" AS "nomeColeira", 
-                   "longitude", "latitude", "distanciaMaxima" AS "distanciaMaxima"
-            FROM "Coleira"
-            WHERE "userID" = %s
+            SELECT id AS "idColeira",
+                usuario_id AS "userID",
+                nome AS "nomeColeira",
+                longitude,
+                latitude,
+                distancia_maxima AS "distanciaMaxima"
+            FROM coleiras
+            WHERE usuario_id = %s
         """
         return self._execute(query, (user_id,), fetchall=True)
-            
-    def delete(self, id_coleira):
-        query = """
-            DELETE FROM "Coleira"
-            WHERE "idColeira" = %s
-            RETURNING "idColeira" AS "idColeira"
-        """
-        return self._execute(query, (id_coleira,), fetchone=True)
 
-    def update_settings(self, id_coleira, data, user_id):
+    def delete(self, id_coleira, user_id):
         query = """
-            UPDATE "Coleira"
-            SET "nomeColeira" = %s,
-                "distanciaMaxima" = %s
-            WHERE "idColeira" = %s
-            AND "userID" = %s
-            RETURNING "idColeira" AS "idColeira"
+            DELETE FROM coleiras
+            WHERE id = %s
+            AND usuario_id = %s
+            RETURNING id AS "idColeira"
         """
-        return self._execute(
+        return self._execute(query, (id_coleira, user_id), fetchone=True)
+
+    def update_settings(self, id_coleira, user_id, data):
+        query = """
+            UPDATE coleiras
+            SET nome = %s,
+                distancia_maxima = %s
+            WHERE id = %s
+            AND usuario_id = %s
+            RETURNING id AS "idColeira"
+        """
+        try:
+            return self._execute(
             query,
-            (
-                data["nomeColeira"],
-                data["distanciaMaxima"],
-                id_coleira,
-                user_id
-            ),
-            fetchone=True
+            (data["nomeColeira"], data["distanciaMaxima"], id_coleira, user_id),
+            fetchone=True,
         )
+        except UniqueViolation:
+            raise AppError("COLLAR_EXISTS")
+            
 
-    def update_coords(self, data, id_coleira):
+    def update_coords(self, id_coleira, data):
         query = """
-            UPDATE "Coleira"
-            SET "longitude" = %s, "latitude" = %s
-            WHERE "idColeira" = %s
-            RETURNING "idColeira" AS "idColeira"
+            UPDATE coleiras
+            SET longitude = %s,
+                latitude = %s
+            WHERE id = %s
+            RETURNING id AS "idColeira"
         """
         return self._execute(
             query,
             (data["longitude"], data["latitude"], id_coleira),
-            fetchone=True
+            fetchone=True,
         )
