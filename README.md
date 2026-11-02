@@ -12,7 +12,7 @@ Oferecer uma solução tecnológica que auxilie tutores no monitoramento de seus
 ## Tecnologias Utilizadas
 - **Frontend:** React (com Vite)  
 - **Backend:** Flask (API REST)  
-- **Banco de Dados:** PostGress
+- **Banco de Dados:** PostGresSQL
 - **Linguagens de Programação:** Python e JavaScript  
 - **Outras Tecnologias :** HTML , CSS
 
